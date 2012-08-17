@@ -53,6 +53,15 @@
 				</includes>
 			</resource>
 		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/java</directory>
+				<includes>
+					<include>**/client/**</include>
+					<include>**/*.gwt.xml</include>
+				</includes>
+			</testResource>
+		</testResources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -75,7 +84,8 @@
 							<goal>test</goal>
 						</goals>
 					</execution>
-					<execution>
+					<!-- Doesnt work, since gwt:compile won't use test scope -->
+					<!-- <execution>
 						<id>compiled-js-for-tests</id>
 						<phase>process-test-classes</phase>
 						<goals>
@@ -84,6 +94,35 @@
 						<configuration>
 							<warSourceDirectory>${basedir}/src/test/webapp</warSourceDirectory>
 							<webappDirectory>${project.build.directory}/www</webappDirectory>
+							<modules>
+								<module>com.colinalworth.gwtdriver.models.SimpleWidgets</module>
+							</modules>
+						</configuration>
+					</execution>-->
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<id>compiled-js-for-tests</id>
+						<phase>process-test-classes</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>java</executable>
+							<classpathScope>test</classpathScope>
+							<arguments>
+								<argument>-classpath</argument>
+								<classpath />
+								<argument>com.google.gwt.dev.Compiler</argument>
+								<argument>-war</argument>
+								<argument>${project.build.directory}/www</argument>
+								<argument>com.colinalworth.gwtdriver.models.SimpleWidgets</argument>
+							</arguments>
 						</configuration>
 					</execution>
 				</executions>
@@ -150,6 +189,25 @@
 										</versionRange>
 										<goals>
 											<goal>exploded</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.codehaus.mojo
+										</groupId>
+										<artifactId>
+											exec-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.2.1,)
+										</versionRange>
+										<goals>
+											<goal>exec</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>

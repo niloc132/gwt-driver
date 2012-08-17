@@ -7,6 +7,8 @@ import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.EventListener;
+import com.google.gwt.user.client.ui.Widget;
 
 public class SeleniumExporter {
 	public static final void export() {
@@ -30,12 +32,27 @@ public class SeleniumExporter {
 	}-*/;
 	static void invoke(final JsArray<?> args) {
 		final Callback callback = args.get(args.length() - 1).cast();
-		GWT.runAsync(new RunAsyncCallback() {
-			@Override
-			public void onSuccess() {
+//		GWT.runAsync(new RunAsyncCallback() {
+//			@Override
+//			public void onSuccess() {
 				final String method = args.<JsArrayString>cast().get(0);
-				
-				if (method.equals("getClass")) {
+				if (method.equals("isWidget")) {
+					Element elt = args.get(1).cast();
+					EventListener listener = DOM.getEventListener(elt);
+					callback.invoke(listener instanceof Widget ? "true" : "false");
+				} else if (method.equals("getContainingWidgetClass")) {
+					Element elt = args.get(1).cast();
+					EventListener listener = DOM.getEventListener(elt);
+					while (listener instanceof Widget == false) {
+						if (elt == null) {
+							callback.invoke(null);
+							return;
+						}
+						elt = elt.getParentElement().cast();
+						listener = DOM.getEventListener(elt);
+					}
+					callback.invoke(listener.getClass().getName());
+				} else if (method.equals("getClass")) {
 					Object obj = get(args, 1);
 					callback.invoke(obj.getClass().getName());
 				} else if (method.equals("instanceof")) {
@@ -66,12 +83,12 @@ public class SeleniumExporter {
 					}
 					callback.invoke("false");
 				}
-			}
-			
-			@Override
-			public void onFailure(Throwable reason) {
-				callback.invoke("Call failed: " + reason.getMessage());
-			}
-		});
+//			}
+//			
+//			@Override
+//			public void onFailure(Throwable reason) {
+//				callback.invoke("Call failed: " + reason.getMessage());
+//			}
+//		});
 	}
 }

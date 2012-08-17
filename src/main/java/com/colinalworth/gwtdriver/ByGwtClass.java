@@ -2,11 +2,13 @@ package com.colinalworth.gwtdriver;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriver.Timeouts;
 import org.openqa.selenium.WebElement;
 
 import com.colinalworth.gwtdriver.models.GwtWidget.ByWidget;
@@ -25,11 +27,15 @@ public class ByGwtClass extends By {
 
 	@Override
 	public List<WebElement> findElements(SearchContext context) {
-		List<WebElement> elts = context.findElements(new ByWidget());
-		
+		List<WebElement> elts = context.findElements(new ByWidget(driver));
+
+		driver.manage().timeouts().setScriptTimeout(1000, TimeUnit.SECONDS);
+
 		List<WebElement> ret = new ArrayList<WebElement>();
 		for (WebElement elt : elts) {
-			String matches = (String) ((JavascriptExecutor)driver).executeAsyncScript("_hello_se", "instanceofwidget", className, elt);
+			String matches = (String) ((JavascriptExecutor)driver).executeAsyncScript("_simplewidgets_se.apply(this, arguments)", "instanceofwidget", className, elt);
+
+			System.out.println("ByGwtClass  " + matches + "  " + elt);
 			if ("true".equals(matches)) {
 				ret.add(elt);
 			}
