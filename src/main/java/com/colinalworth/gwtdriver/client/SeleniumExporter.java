@@ -32,9 +32,9 @@ public class SeleniumExporter {
 	}-*/;
 	static void invoke(final JsArray<?> args) {
 		final Callback callback = args.get(args.length() - 1).cast();
-//		GWT.runAsync(new RunAsyncCallback() {
-//			@Override
-//			public void onSuccess() {
+		GWT.runAsync(new RunAsyncCallback() {
+			@Override
+			public void onSuccess() {
 				final String method = args.<JsArrayString>cast().get(0);
 				if (method.equals("isWidget")) {
 					Element elt = args.get(1).cast();
@@ -83,12 +83,12 @@ public class SeleniumExporter {
 					}
 					callback.invoke("false");
 				}
-//			}
-//			
-//			@Override
-//			public void onFailure(Throwable reason) {
-//				callback.invoke("Call failed: " + reason.getMessage());
-//			}
-//		});
+			}
+			
+			@Override
+			public void onFailure(Throwable reason) {
+				callback.invoke("Call failed: " + reason.getMessage());
+			}
+		});
 	}
 }
