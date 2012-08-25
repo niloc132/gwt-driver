@@ -3,6 +3,9 @@
 <module rename-to="simplewidgets">
 	<inherits name="com.google.gwt.user.User" />
 	<inherits name="com.colinalworth.gwtdriver.GwtDriver" />
+	
+	<inherits name="com.google.gwt.logging.LoggingDisabled" />
+	
 	<source path="client" />
 	<entry-point class="com.colinalworth.gwtdriver.models.client.SimpleWidgetsEP" />
 	<collapse-all-properties />

@@ -1,3 +1,5 @@
 <module>
 	<source path="client" />
+	
+	<entry-point class="com.colinalworth.gwtdriver.client.SeleniumExporter" />
 </module>

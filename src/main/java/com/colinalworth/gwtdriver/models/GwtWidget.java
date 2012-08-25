@@ -1,21 +1,28 @@
 package com.colinalworth.gwtdriver.models;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.WebDriver.Timeouts;
+
+import com.colinalworth.gwtdriver.models.GwtWidget.ForWidget;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Represents a GWT Widget class, allowing some 
  * @author colin
  *
  */
+@ForWidget(Widget.class)
 public class GwtWidget {
 	private final WebDriver driver;
 	private final WebElement element;
@@ -33,10 +40,23 @@ public class GwtWidget {
 	}
 
 
+	@Inherited
+	@Target(ElementType.TYPE)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface ForWidget {
+		Class<? extends Widget> value();
+	}
 
 	public <W extends GwtWidget> W as(Class<W> clazz) {
 		try {
 			W instance;
+			ForWidget widgetType = clazz.getAnnotation(ForWidget.class);
+			if (widgetType != null) {
+				String is = (String)((JavascriptExecutor)getDriver()).executeAsyncScript("_simplewidgets_se.apply(this, arguments)", "instanceofwidget", getElement(), widgetType.value().getName());
+				if (!"true".equals(is)) {
+					throw new IllegalArgumentException("Cannot complete as(" + clazz.getSimpleName() + ".class), element isn't a " + widgetType.value().getName());
+				}
+			}
 			instance = clazz.getConstructor(WebDriver.class, WebElement.class).newInstance(getDriver(), getElement());
 			return instance;
 		} catch (Exception e) {
@@ -55,17 +75,15 @@ public class GwtWidget {
 		public List<WebElement> findElements(SearchContext context) {
 			//			return ((FindsByXPath) context).findElementsByXPath(".//*[@__listener]");
 
-			driver.manage().timeouts().setScriptTimeout(1000, TimeUnit.SECONDS);
-
 			List<WebElement> elts = context.findElements(By.tagName("*"));
 
 			System.out.println();
-			System.out.println("Searching in " + context);
+			System.out.println("Searching in " + context + " for any widget");
 			List<WebElement> ret = new ArrayList<WebElement>();
 			for (WebElement elt : elts) {
 				String matches = (String) ((JavascriptExecutor)driver).executeAsyncScript("_simplewidgets_se.apply(this, arguments)", "isWidget", elt);
 
-				System.out.println("ByWidget  " + matches + "  " + elt);
+				System.out.println("ByWidget  " + matches + "  " + elt.getTagName() + ": " + elt.getText());
 				if ("true".equals(matches)) {
 					ret.add(elt);
 				}

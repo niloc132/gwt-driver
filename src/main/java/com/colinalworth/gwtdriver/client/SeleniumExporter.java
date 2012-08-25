@@ -1,5 +1,10 @@
 package com.colinalworth.gwtdriver.client;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
@@ -10,8 +15,79 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SeleniumExporter {
+public class SeleniumExporter implements EntryPoint {
+	private static final Logger logger = Logger.getLogger(SeleniumExporter.class.getName());
+	private static final Map<String, Function> functions = new HashMap<String, Function>();
+	
+	@Override
+	public void onModuleLoad() {
+		export();
+	}
+	
 	public static final void export() {
+		functions.put("isWidget", new Function() {
+			@Override
+			public Object apply(JsArray<?> args) {
+				Element elt = args.get(0).cast();
+				EventListener listener = DOM.getEventListener(elt);
+				return "" + (listener instanceof Widget);
+			}
+		});
+		functions.put("instanceofwidget", new Function() {
+			@Override
+			public Object apply(JsArray<?> args) {
+				Element elt = args.get(0).cast();
+				String type = (args.<JsArrayString>cast().get(1));
+
+				Object instance = DOM.getEventListener(elt);
+				Class<?> currentType = instance.getClass();
+				while (currentType != null && !currentType.getName().equals(Object.class.getName())) {
+					if (type.equals(currentType.getName())) {
+						return "" + true;
+					}
+					currentType = currentType.getSuperclass();
+				}
+				return "" + false;
+			}
+		});
+		functions.put("getContainingWidgetClass", new Function() {
+			@Override
+			public Object apply(JsArray<?> args) {
+				Element elt = args.get(0).cast();
+				EventListener listener = DOM.getEventListener(elt);
+				while (listener instanceof Widget == false) {
+					if (elt == null) {
+						return null;
+					}
+					elt = elt.getParentElement().cast();
+					listener = DOM.getEventListener(elt);
+				}
+				return listener.getClass().getName();
+			}
+		});
+		functions.put("getClass", new Function() {
+			@Override
+			public Object apply(JsArray<?> args) {
+				Object obj = get(args, 1);
+				return obj.getClass().getName();
+			}
+		});
+		functions.put("instanceof", new Function() {
+			@Override
+			public Object apply(JsArray<?> args) {
+				String type = (args.<JsArrayString>cast().get(0));
+				Object instance = (get(args, 1));
+
+				Class<?> currentType = instance.getClass();
+				while (currentType != null && !currentType.getName().equals(Object.class.getName())) {
+					if (type.equals(currentType.getName())) {
+						return "" + true;
+					}
+					currentType = currentType.getSuperclass();
+				}
+				return "" + false;
+			}
+		});
 		export(GWT.getModuleName());
 	}
 	private static native void export(String moduleName) /*-{
@@ -22,8 +98,7 @@ public class SeleniumExporter {
 	private final static class Callback extends JavaScriptObject {
 		protected Callback() {
 		}
-		public native void invoke(String result) /*-{
-//			debugger;
+		public native void invoke(Object result) /*-{
 			this(result);
 		}-*/;
 	}
@@ -36,59 +111,52 @@ public class SeleniumExporter {
 			@Override
 			public void onSuccess() {
 				final String method = args.<JsArrayString>cast().get(0);
-				if (method.equals("isWidget")) {
-					Element elt = args.get(1).cast();
-					EventListener listener = DOM.getEventListener(elt);
-					callback.invoke(listener instanceof Widget ? "true" : "false");
-				} else if (method.equals("getContainingWidgetClass")) {
-					Element elt = args.get(1).cast();
-					EventListener listener = DOM.getEventListener(elt);
-					while (listener instanceof Widget == false) {
-						if (elt == null) {
-							callback.invoke(null);
-							return;
-						}
-						elt = elt.getParentElement().cast();
-						listener = DOM.getEventListener(elt);
+				logger.info("running method: " + method);
+				JsArray<?> functionArgs = splice(args);
+				if (functions.containsKey(method)) {
+					try {
+						Object response = functions.get(method).apply(functionArgs);
+						logger.info("response ready: " + response);
+						callback.invoke(response);
+					} catch (Exception e) {
+						logger.severe("Error occured: " + e.getMessage());
+						callback.invoke("Error occured: " + e.getMessage());
 					}
-					callback.invoke(listener.getClass().getName());
-				} else if (method.equals("getClass")) {
-					Object obj = get(args, 1);
-					callback.invoke(obj.getClass().getName());
-				} else if (method.equals("instanceof")) {
-					String type = (args.<JsArrayString>cast().get(1));
-					Object instance = (get(args, 2));
-					
-					Class<?> currentType = instance.getClass();
-					while (currentType != null && !currentType.getName().equals("java.lang.Object")) {
-						if (type.equals(currentType.getName())) {
-							callback.invoke("true");
-							return;
-						}
-						currentType = currentType.getSuperclass();
-					}
-					callback.invoke("false");
-				} else if (method.equals("instanceofwidget")) {
-					String type = (args.<JsArrayString>cast().get(1));
-					Element elt = args.get(2).cast();
-					
-					Object instance = DOM.getEventListener(elt);
-					Class<?> currentType = instance.getClass();
-					while (currentType != null && !currentType.getName().equals("java.lang.Object")) {
-						if (type.equals(currentType.getName())) {
-							callback.invoke("true");
-							return;
-						}
-						currentType = currentType.getSuperclass();
-					}
-					callback.invoke("false");
+				} else {
+					logger.severe("Method could not be invoked: " + method);
+					callback.invoke("Error: could not find method '" + method + "'");
 				}
 			}
-			
+
+			private native JsArray<?> splice(JsArray<?> args) /*-{
+				return $wnd.Array.prototype.splice.call(args, 1,args.length - 2);
+			}-*/;
+
 			@Override
 			public void onFailure(Throwable reason) {
 				callback.invoke("Call failed: " + reason.getMessage());
 			}
 		});
+	}
+
+
+	/**
+	 * From selenium's JavascriptExecutor:
+	 * 
+	 *" Script arguments must be a number, a boolean, a String, WebElement, or a List of any
+	 * combination of the above. An exception will be thrown if the arguments do not meet these
+	 * criteria. The arguments will be made available to the JavaScript via the "arguments"
+	 * variable."
+	 * 
+	 * ...
+	 * 
+	 * "{@literal @}return One of Boolean, Long, String, List, WebElement, or null."
+	 * 
+	 * @author colin
+	 *
+	 */
+	public interface Function {
+		Object apply(JsArray<?> args);
+		
 	}
 }
