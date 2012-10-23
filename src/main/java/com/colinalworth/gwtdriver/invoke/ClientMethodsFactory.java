@@ -68,11 +68,11 @@ public class ClientMethodsFactory {
 		JavascriptExecutor exec = (JavascriptExecutor) driver;
 
 		return (List<String>) exec.executeScript("var n=[];" +
-				"function a(c) {c.$modulename && n.push(c.$moduleName)};" +
+				"function a(c) {c.$moduleName && n.push(c.$moduleName)};" +
 				"a(window);" +
 				"for (var b=0; b<frames.length;b++) {" +
 				"a(frames[b]);" +
 				"}" +
-				"return a;");
+				"return n;");
 	}
 }

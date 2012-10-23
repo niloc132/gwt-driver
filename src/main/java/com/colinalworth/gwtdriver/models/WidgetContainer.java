@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
  * @author colin
  *
  */
-public class WidgetContainer extends GwtWidget {
+public class WidgetContainer extends GwtWidget<GwtWidgetFinder<WidgetContainer>> {
 
 	public WidgetContainer(WebDriver driver, WebElement element) {
 		super(driver, element);
@@ -29,12 +29,12 @@ public class WidgetContainer extends GwtWidget {
 	 * @param by
 	 * @return
 	 */
-	public List<GwtWidget> findWidgets(By by) {
-		List<WebElement> elts = getElement().findElements(new ByChained(new ByWidget(getDriver())/*, by*/));
+	public List<GwtWidget<?>> findWidgets(By by) {
+		List<WebElement> elts = getElement().findElements(new ByChained(/*by, */new ByWidget(getDriver())));
 		System.out.println("elts found " + elts.size());
-		List<GwtWidget> children = new ArrayList<GwtWidget>();
+		List<GwtWidget<?>> children = new ArrayList<GwtWidget<?>>();
 		for (WebElement elt : elts) {
-			children.add(new GwtWidget(getDriver(), elt));
+			children.add(new GwtWidget<GwtWidgetFinder<?>>(getDriver(), elt));
 		}
 		return children;
 	}
@@ -47,9 +47,9 @@ public class WidgetContainer extends GwtWidget {
 	 * @param by
 	 * @return
 	 */
-	public GwtWidget findWidget(By by) {
-		WebElement elt = getElement().findElement(new ByChained(new ByWidget(getDriver())/*, by*/));
-		return new GwtWidget(getDriver(), elt);
+	public GwtWidget<?> findWidget(By by) {
+		WebElement elt = getElement().findElement(new ByChained(by, new ByWidget(getDriver())));
+		return new GwtWidget<GwtWidgetFinder<?>>(getDriver(), elt);
 	}
 
 }

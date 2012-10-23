@@ -46,7 +46,7 @@ public class SimpleWidgetTest {
 			WidgetContainer widget = new GwtRootPanel(wd);
 			assert widget.as(GwtRootPanel.class) != null;
 
-			List<GwtWidget> children = widget.findWidgets(By.xpath("//*"));
+			List<GwtWidget<?>> children = widget.findWidgets(By.xpath("*"));
 			assert children.size() == 1;
 			GwtLabel label = children.get(0).as(GwtLabel.class);
 

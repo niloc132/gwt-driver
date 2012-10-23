@@ -65,6 +65,24 @@ public class SeleniumExporter implements EntryPoint {
 				return listener.getClass().getName();
 			}
 		});
+		functions.put("getContainingWidgetElt", new Function() {
+			@Override
+			public Object apply(JsArray<?> args) {
+				Element elt = args.get(0).cast();
+				EventListener listener = DOM.getEventListener(elt);
+				while (listener instanceof Widget == false) {
+					if (elt == null) {
+						return null;
+					}
+					elt = elt.getParentElement().cast();
+					if (elt == elt.getOwnerDocument().cast()) {
+						return null;
+					}
+					listener = DOM.getEventListener(elt);
+				}
+				return elt;
+			}
+		});
 		functions.put("getClass", new Function() {
 			@Override
 			public Object apply(JsArray<?> args) {

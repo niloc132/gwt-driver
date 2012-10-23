@@ -14,6 +14,7 @@ import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.colinalworth.gwtdriver.invoke.ClientMethodsFactory;
 import com.colinalworth.gwtdriver.models.GwtWidget.ForWidget;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -23,7 +24,7 @@ import com.google.gwt.user.client.ui.Widget;
  *
  */
 @ForWidget(Widget.class)
-public class GwtWidget {
+public class GwtWidget<F extends GwtWidgetFinder<?>> {
 	private final WebDriver driver;
 	private final WebElement element;
 
@@ -80,8 +81,9 @@ public class GwtWidget {
 			System.out.println();
 			System.out.println("Searching in " + context + " for any widget");
 			List<WebElement> ret = new ArrayList<WebElement>();
+			String module = ClientMethodsFactory.findModules(driver).get(0);
 			for (WebElement elt : elts) {
-				String matches = (String) ((JavascriptExecutor)driver).executeAsyncScript("_simplewidgets_se.apply(this, arguments)", "isWidget", elt);
+				String matches = (String) ((JavascriptExecutor)driver).executeAsyncScript("_" + module + "_se.apply(this, arguments)", "isWidget", elt);
 
 				System.out.println("ByWidget  " + matches + "  " + elt.getTagName() + ": " + elt.getText());
 				if ("true".equals(matches)) {
