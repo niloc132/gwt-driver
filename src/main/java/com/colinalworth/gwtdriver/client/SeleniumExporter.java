@@ -21,11 +21,8 @@ public class SeleniumExporter implements EntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-		export();
-	}
-	
-	public static final void export() {
-		functions.put("isWidget", new Function() {
+		export(GWT.getModuleName());
+		registerFunction("isWidget", new Function() {
 			@Override
 			public Object apply(JsArray<?> args) {
 				Element elt = args.get(0).cast();
@@ -33,12 +30,12 @@ public class SeleniumExporter implements EntryPoint {
 				return "" + (listener instanceof Widget);
 			}
 		});
-		functions.put("instanceofwidget", new Function() {
+		registerFunction("instanceofwidget", new Function() {
 			@Override
 			public Object apply(JsArray<?> args) {
 				Element elt = args.get(0).cast();
 				String type = (args.<JsArrayString>cast().get(1));
-
+				
 				Object instance = DOM.getEventListener(elt);
 				Class<?> currentType = instance.getClass();
 				while (currentType != null && !currentType.getName().equals(Object.class.getName())) {
@@ -50,7 +47,7 @@ public class SeleniumExporter implements EntryPoint {
 				return "" + false;
 			}
 		});
-		functions.put("getContainingWidgetClass", new Function() {
+		registerFunction("getContainingWidgetClass", new Function() {
 			@Override
 			public Object apply(JsArray<?> args) {
 				Element elt = args.get(0).cast();
@@ -65,7 +62,7 @@ public class SeleniumExporter implements EntryPoint {
 				return listener.getClass().getName();
 			}
 		});
-		functions.put("getContainingWidgetElt", new Function() {
+		registerFunction("getContainingWidgetElt", new Function() {
 			@Override
 			public Object apply(JsArray<?> args) {
 				Element elt = args.get(0).cast();
@@ -83,30 +80,32 @@ public class SeleniumExporter implements EntryPoint {
 				return elt;
 			}
 		});
-		functions.put("getClass", new Function() {
-			@Override
-			public Object apply(JsArray<?> args) {
-				Object obj = get(args, 1);
-				return obj.getClass().getName();
-			}
-		});
-		functions.put("instanceof", new Function() {
-			@Override
-			public Object apply(JsArray<?> args) {
-				String type = (args.<JsArrayString>cast().get(0));
-				Object instance = (get(args, 1));
-
-				Class<?> currentType = instance.getClass();
-				while (currentType != null && !currentType.getName().equals(Object.class.getName())) {
-					if (type.equals(currentType.getName())) {
-						return "" + true;
-					}
-					currentType = currentType.getSuperclass();
-				}
-				return "" + false;
-			}
-		});
-		export(GWT.getModuleName());
+//		registerFunction("getClass", new Function() {
+//			@Override
+//			public Object apply(JsArray<?> args) {
+//				Object obj = get(args, 1);
+//				return obj.getClass().getName();
+//			}
+//		});
+//		registerFunction("instanceOf", new Function() {
+//			@Override
+//			public Object apply(JsArray<?> args) {
+//				String type = (args.<JsArrayString>cast().get(0));
+//				Object instance = (get(args, 1));
+//
+//				Class<?> currentType = instance.getClass();
+//				while (currentType != null && !currentType.getName().equals(Object.class.getName())) {
+//					if (type.equals(currentType.getName())) {
+//						return "" + true;
+//					}
+//					currentType = currentType.getSuperclass();
+//				}
+//				return "" + false;
+//			}
+//		});
+	}
+	public static void registerFunction(String name, Function func) {
+		functions.put(name, func);
 	}
 	private static native void export(String moduleName) /*-{
 		$wnd['_' + moduleName + '_se'] = $entry(function() {
