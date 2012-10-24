@@ -9,13 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import com.colinalworth.gwtdriver.ModuleUtilities;
 import com.colinalworth.gwtdriver.invoke.ClientMethodsFactory;
+import com.colinalworth.gwtdriver.invoke.ExportedMethods;
 import com.colinalworth.gwtdriver.models.GwtWidget.ForWidget;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -42,6 +41,10 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 		return driver;
 	}
 
+	public <W extends GwtWidget<T>, T extends GwtWidgetFinder<W>> T find(Class<W> widgetType) {
+		
+		return null;
+	}
 
 	@Inherited
 	@Target(ElementType.TYPE)
@@ -50,14 +53,13 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 		Class<? extends Widget> value();
 	}
 
-	public <W extends GwtWidget> W as(Class<W> clazz) {
+	public <W extends GwtWidget<?>> W as(Class<W> clazz) {
 		try {
 			W instance;
 			ForWidget widgetType = clazz.getAnnotation(ForWidget.class);
 			if (widgetType != null) {
-//				String module = ModuleUtilities.findModules(getDriver()).get(0);
-				String is = (String) ModuleUtilities.executeExportedFunction("instanceofwidget", driver, getElement(), widgetType.value().getName());
-//				String is = (String)((JavascriptExecutor)getDriver()).executeAsyncScript("_"+module+"_se.apply(this, arguments)", "instanceofwidget", getElement(), widgetType.value().getName());
+				ExportedMethods m = ClientMethodsFactory.create(ExportedMethods.class, driver);
+				String is = m.instanceofwidget(element, widgetType.value().getName());
 				if (!"true".equals(is)) {
 					throw new IllegalArgumentException("Cannot complete as(" + clazz.getSimpleName() + ".class), element isn't a " + widgetType.value().getName());
 				}
@@ -78,17 +80,14 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 		}
 		@Override
 		public List<WebElement> findElements(SearchContext context) {
-			//			return ((FindsByXPath) context).findElementsByXPath(".//*[@__listener]");
-
 			List<WebElement> elts = context.findElements(By.tagName("*"));
 
 			System.out.println();
 			System.out.println("Searching in " + context + " for any widget");
 			List<WebElement> ret = new ArrayList<WebElement>();
-//			String module = ModuleUtilities.findModules(driver).get(0);
+			ExportedMethods m = ClientMethodsFactory.create(ExportedMethods.class, driver);
 			for (WebElement elt : elts) {
-				String matches = (String) ModuleUtilities.executeExportedFunction("isWidget", driver, elt);
-//				String matches = (String) ((JavascriptExecutor)driver).executeAsyncScript("_" + module + "_se.apply(this, arguments)", "isWidget", elt);
+				String matches = m.isWidget(elt);
 
 				System.out.println("ByWidget  " + matches + "  " + elt.getTagName() + ": " + elt.getText());
 				if ("true".equals(matches)) {

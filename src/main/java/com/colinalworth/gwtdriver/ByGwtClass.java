@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.colinalworth.gwtdriver.invoke.ClientMethodsFactory;
+import com.colinalworth.gwtdriver.invoke.ExportedMethods;
 import com.colinalworth.gwtdriver.models.GwtWidget.ByWidget;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -28,10 +29,9 @@ public class ByGwtClass extends By {
 		List<WebElement> elts = context.findElements(new ByWidget(driver));
 
 		List<WebElement> ret = new ArrayList<WebElement>();
+		ExportedMethods m = ClientMethodsFactory.create(ExportedMethods.class, driver);
 		for (WebElement elt : elts) {
-			String matches = (String) ModuleUtilities.executeExportedFunction("instanceofwidget", driver, className, elt);
-//			String matches = (String) ((JavascriptExecutor)driver).executeAsyncScript("_simplewidgets_se.apply(this, arguments)", "instanceofwidget", className, elt);
-
+			String matches = m.instanceofwidget(elt, className);
 			System.out.println("ByGwtClass  " + matches + "  " + elt);
 			if ("true".equals(matches)) {
 				ret.add(elt);

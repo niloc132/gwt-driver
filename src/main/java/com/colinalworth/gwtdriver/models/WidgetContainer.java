@@ -48,7 +48,7 @@ public class WidgetContainer extends GwtWidget<GwtWidgetFinder<WidgetContainer>>
 	 * @return
 	 */
 	public GwtWidget<?> findWidget(By by) {
-		WebElement elt = getElement().findElement(new ByChained(by, new ByWidget(getDriver())));
+		WebElement elt = getElement().findElement(new ByChained(/*by, */new ByWidget(getDriver())));
 		return new GwtWidget<GwtWidgetFinder<?>>(getDriver(), elt);
 	}
 

@@ -9,5 +9,5 @@ public interface ClientMethods {
 	public @interface ClientType {
 		Class<?> value();
 	}
-	
+
 }

@@ -10,6 +10,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import com.colinalworth.gwtdriver.invoke.ClientMethodsFactory;
+import com.colinalworth.gwtdriver.invoke.ExportedMethods;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ByNearestWidget extends By {
@@ -45,9 +46,8 @@ public class ByNearestWidget extends By {
 	@Override
 	public WebElement findElement(SearchContext context) {
 		WebElement elt = context.findElement(By.xpath("."));
-		return (WebElement) ModuleUtilities.executeExportedFunction("getContainingWidgetElt", driver, elt);
-//		String moduleName = ModuleUtilities.findModules(driver).get(0);
-//		return (WebElement) ((JavascriptExecutor)driver).executeAsyncScript("_"+moduleName+"_se.apply(this, arguments)", "getContainingWidgetElt", elt);
+		ExportedMethods m = ClientMethodsFactory.create(ExportedMethods.class, driver);
+		return m.getContainingWidgetElt(elt);
 	}
 
 	@Override

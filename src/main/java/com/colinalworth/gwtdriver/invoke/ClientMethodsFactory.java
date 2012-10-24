@@ -9,6 +9,12 @@ import org.openqa.selenium.WebDriver;
 
 import com.colinalworth.gwtdriver.ModuleUtilities;
 
+/**
+ * Allows simple invocation of exported methods from GWT. Must follow the same
+ * rules as {@link JavascriptExecutor#executeAsyncScript(String, Object...)} in
+ * both the Java/Test and Java/Gwt/Client code.
+ *
+ */
 public class ClientMethodsFactory {
 	private static final class InvocationHandlerImplementation implements
 	InvocationHandler {
