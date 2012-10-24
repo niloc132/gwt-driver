@@ -13,19 +13,16 @@ public class ClientMethodsFactory {
 	private static final class InvocationHandlerImplementation implements
 	InvocationHandler {
 		private final WebDriver driver;
-		private final String function;
+		private final String module;
 
-		private InvocationHandlerImplementation(WebDriver driver, String function) {
+		private InvocationHandlerImplementation(WebDriver driver, String module) {
 			this.driver = driver;
-			this.function = function;
+			this.module = module;
 		}
 
 		@Override
 		public Object invoke(Object instance, Method method, Object[] args) throws Throwable {
-			Object[] allArgs = new Object[args.length + 1];
-			allArgs[0] = method;
-			System.arraycopy(args, 0, allArgs, 1, args.length);
-			return ((JavascriptExecutor)driver).executeAsyncScript(function + ".apply(this, arguments)", allArgs);
+			return ModuleUtilities.executeExportedFunction(module, method.getName(), driver, args);
 		}
 	}
 
@@ -50,9 +47,8 @@ public class ClientMethodsFactory {
 	 */
 	public static <T extends ClientMethods> T create(Class<T> type, WebDriver driver, String moduleName) {
 		assert driver instanceof JavascriptExecutor;
-		final String function = "_" + moduleName + "_se";
 		@SuppressWarnings("unchecked")
-		T proxy = (T) Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[]{type}, new InvocationHandlerImplementation(driver, function));
+		T proxy = (T) Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[]{type}, new InvocationHandlerImplementation(driver, moduleName));
 		return proxy;
 	}
 }
