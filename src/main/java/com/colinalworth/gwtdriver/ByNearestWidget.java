@@ -45,8 +45,9 @@ public class ByNearestWidget extends By {
 	@Override
 	public WebElement findElement(SearchContext context) {
 		WebElement elt = context.findElement(By.xpath("."));
-		String moduleName = ClientMethodsFactory.findModules(driver).get(0);
-		return (WebElement) ((JavascriptExecutor)driver).executeAsyncScript("_"+moduleName+"_se.apply(this, arguments)", "getContainingWidgetElt", elt);
+		return (WebElement) ModuleUtilities.executeExportedFunction("getContainingWidgetElt", driver, elt);
+//		String moduleName = ModuleUtilities.findModules(driver).get(0);
+//		return (WebElement) ((JavascriptExecutor)driver).executeAsyncScript("_"+moduleName+"_se.apply(this, arguments)", "getContainingWidgetElt", elt);
 	}
 
 	@Override

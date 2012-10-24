@@ -29,7 +29,8 @@ public class ByGwtClass extends By {
 
 		List<WebElement> ret = new ArrayList<WebElement>();
 		for (WebElement elt : elts) {
-			String matches = (String) ((JavascriptExecutor)driver).executeAsyncScript("_simplewidgets_se.apply(this, arguments)", "instanceofwidget", className, elt);
+			String matches = (String) ModuleUtilities.executeExportedFunction("instanceofwidget", driver, className, elt);
+//			String matches = (String) ((JavascriptExecutor)driver).executeAsyncScript("_simplewidgets_se.apply(this, arguments)", "instanceofwidget", className, elt);
 
 			System.out.println("ByGwtClass  " + matches + "  " + elt);
 			if ("true".equals(matches)) {
