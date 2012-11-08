@@ -11,6 +11,8 @@ public interface ExportedMethods extends ClientMethods {
 	
 	WebElement getContainingWidgetElt(WebElement elt);
 	
+	WebElement getContainingWidgetEltOfType(WebElement elt, String type);
+	
 //	String getClass(Object obj);
 	
 //	String instanceOf(String type, Object instance);

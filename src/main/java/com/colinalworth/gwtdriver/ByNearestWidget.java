@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -47,7 +46,7 @@ public class ByNearestWidget extends By {
 	public WebElement findElement(SearchContext context) {
 		WebElement elt = context.findElement(By.xpath("."));
 		ExportedMethods m = ClientMethodsFactory.create(ExportedMethods.class, driver);
-		return m.getContainingWidgetElt(elt);
+		return m.getContainingWidgetEltOfType(elt, widget.getName());
 	}
 
 	@Override

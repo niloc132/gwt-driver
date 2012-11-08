@@ -37,14 +37,10 @@ public class SeleniumExporter implements EntryPoint {
 				String type = (args.<JsArrayString>cast().get(1));
 				
 				Object instance = DOM.getEventListener(elt);
-				Class<?> currentType = instance.getClass();
-				while (currentType != null && !currentType.getName().equals(Object.class.getName())) {
-					if (type.equals(currentType.getName())) {
-						return "" + true;
-					}
-					currentType = currentType.getSuperclass();
+				if (instance == null) {
+					return "null";
 				}
-				return "" + false;
+				return "" + isOfType(type, instance);
 			}
 		});
 		registerFunction("getContainingWidgetClass", new Function() {
@@ -80,6 +76,30 @@ public class SeleniumExporter implements EntryPoint {
 				return elt;
 			}
 		});
+		registerFunction("getContainingWidgetEltOfType", new Function() {
+			@Override
+			public Object apply(JsArray<?> args) {
+				Element elt = args.get(0).cast();
+				String type = (args.<JsArrayString>cast().get(1));
+				EventListener listener = DOM.getEventListener(elt);
+				while (listener instanceof Widget == false) {
+					if (elt == null) {
+						return null;
+					}
+					elt = elt.getParentElement().cast();
+					if (elt == elt.getOwnerDocument().cast()) {
+						return null;
+					}
+					listener = DOM.getEventListener(elt);
+				}
+				//found a real widget
+				Widget w = (Widget) listener;
+				while (w != null && !isOfType(type, w)) {
+					w = w.getParent();
+				}
+				return w == null ? null : w.getElement();
+			}
+		});
 //		registerFunction("getClass", new Function() {
 //			@Override
 //			public Object apply(JsArray<?> args) {
@@ -103,6 +123,16 @@ public class SeleniumExporter implements EntryPoint {
 //				return "" + false;
 //			}
 //		});
+	}
+	private static boolean isOfType(String type, Object instance) {
+		Class<?> currentType = instance.getClass();
+		while (currentType != null && !currentType.getName().equals(Object.class.getName())) {
+			if (type.equals(currentType.getName())) {
+				return true;
+			}
+			currentType = currentType.getSuperclass();
+		}
+		return false;
 	}
 	public static void registerFunction(String name, Function func) {
 		functions.put(name, func);

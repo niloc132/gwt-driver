@@ -28,7 +28,11 @@ public class ClientMethodsFactory {
 
 		@Override
 		public Object invoke(Object instance, Method method, Object[] args) throws Throwable {
-			return ModuleUtilities.executeExportedFunction(module, method.getName(), driver, args);
+			Object ret = ModuleUtilities.executeExportedFunction(module, method.getName(), driver, args);
+			if (method.getReturnType() != String.class && ret instanceof String) {
+				throw new RuntimeException(ret.toString());
+			}
+			return ret;
 		}
 	}
 

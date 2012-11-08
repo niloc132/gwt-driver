@@ -40,14 +40,12 @@ public class SimpleWidgetTest {
 		wd.manage().timeouts().setScriptTimeout(1000, TimeUnit.SECONDS);
 		wd.get("http://" + server.getHost() + ":" + server.getPort() + "/index.html");
 
-		Thread.sleep(1000);
-
 		try {
 			WidgetContainer widget = new GwtRootPanel(wd);
 			assert widget.as(GwtRootPanel.class) != null;
 
 			List<GwtWidget<?>> children = widget.findWidgets(By.xpath("*"));
-			assert children.size() == 3;
+			assert children.size() == 2 : children.size();
 			GwtLabel label = children.get(0).as(GwtLabel.class);
 
 			assert label != null;

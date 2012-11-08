@@ -5,6 +5,8 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +44,34 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 	}
 
 	public <W extends GwtWidget<T>, T extends GwtWidgetFinder<W>> T find(Class<W> widgetType) {
-		
+		Type i = widgetType;
+		do {
+			if (i instanceof ParameterizedType) {
+				ParameterizedType t = (ParameterizedType) i;
+				if (t.getRawType() == GwtWidget.class) {
+					@SuppressWarnings("unchecked")
+					Class<T> finderType = (Class<T>) t.getActualTypeArguments()[0];
+					
+					T instance = createInstance(finderType);
+					if (instance != null) {
+						instance.withDriver(getDriver());
+						instance.withElement(getElement());
+						return instance;
+					}
+				}
+			}
+			i = (i instanceof Class) ? ((Class<?>)i).getGenericSuperclass() : null;
+		} while(i != null);
+		return null;
+	}
+	protected <T extends GwtWidgetFinder<?>> T createInstance(Class<T> type) {
+		try {
+			return type.newInstance();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
@@ -75,23 +104,36 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 
 	public static class ByWidget extends By {
 		private final WebDriver driver;
+		private final String type;
 		public ByWidget(WebDriver driver) {
+			this(driver, Widget.class);
+		}
+		public ByWidget(WebDriver driver, Class<? extends Widget> widgetType) {
 			this.driver = driver;
+			this.type = widgetType.getName();
 		}
 		@Override
 		public List<WebElement> findElements(SearchContext context) {
-			List<WebElement> elts = context.findElements(By.tagName("*"));
+			List<WebElement> elts = context.findElements(By.xpath(".//*"));
 
-			System.out.println();
 			System.out.println("Searching in " + context + " for any widget");
 			List<WebElement> ret = new ArrayList<WebElement>();
 			ExportedMethods m = ClientMethodsFactory.create(ExportedMethods.class, driver);
 			for (WebElement elt : elts) {
 				String matches = m.isWidget(elt);
 
-				System.out.println("ByWidget  " + matches + "  " + elt.getTagName() + ": " + elt.getText());
+				System.out.println("ByWidget\t" + matches + "\t" + elt.getTagName() + ": " + elt.getText());
 				if ("true".equals(matches)) {
-					ret.add(elt);
+					if (Widget.class.getName().equals(type)) {
+						System.out.println("only looking for widget, just adding");
+						ret.add(elt);
+					} else {
+						String matchType = m.instanceofwidget(elt, type);
+						System.out.println(matchType);
+						if ("true".equals(matchType)) {
+							ret.add(elt);
+						}
+					}
 				}
 			}
 			System.out.println("Done, found " + ret.size());

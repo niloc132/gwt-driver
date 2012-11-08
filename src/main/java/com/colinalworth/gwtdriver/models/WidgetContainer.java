@@ -30,7 +30,7 @@ public class WidgetContainer extends GwtWidget<GwtWidgetFinder<WidgetContainer>>
 	 * @return
 	 */
 	public List<GwtWidget<?>> findWidgets(By by) {
-		List<WebElement> elts = getElement().findElements(new ByChained(/*by, */new ByWidget(getDriver())));
+		List<WebElement> elts = getElement().findElements(new ByChained(by, new ByWidget(getDriver())));
 		System.out.println("elts found " + elts.size());
 		List<GwtWidget<?>> children = new ArrayList<GwtWidget<?>>();
 		for (WebElement elt : elts) {
