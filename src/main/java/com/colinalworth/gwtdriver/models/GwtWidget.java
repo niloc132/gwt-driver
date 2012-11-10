@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -120,20 +121,11 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 			List<WebElement> ret = new ArrayList<WebElement>();
 			ExportedMethods m = ClientMethodsFactory.create(ExportedMethods.class, driver);
 			for (WebElement elt : elts) {
-				String matches = m.isWidget(elt);
+				String matches = m.instanceofwidget(elt, type);
 
 				System.out.println("ByWidget\t" + matches + "\t" + elt.getTagName() + ": " + elt.getText());
 				if ("true".equals(matches)) {
-					if (Widget.class.getName().equals(type)) {
-						System.out.println("only looking for widget, just adding");
-						ret.add(elt);
-					} else {
-						String matchType = m.instanceofwidget(elt, type);
-						System.out.println(matchType);
-						if ("true".equals(matchType)) {
-							ret.add(elt);
-						}
-					}
+					ret.add(elt);
 				}
 			}
 			System.out.println("Done, found " + ret.size());
@@ -141,8 +133,22 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 			return ret;
 		}
 		@Override
+		public WebElement findElement(SearchContext context) {
+			List<WebElement> elts = context.findElements(By.xpath(".//*"));
+			ExportedMethods m = ClientMethodsFactory.create(ExportedMethods.class, driver);
+			for (WebElement elt : elts) {
+				String matches = m.instanceofwidget(elt, type);
+
+				System.out.println("ByWidget\t" + matches + "\t" + elt.getTagName() + ": " + elt.getText());
+				if ("true".equals(matches)) {
+					return elt;
+				}
+			}
+			throw new NoSuchElementException("Can't find widget of type " + type);
+		}
+		@Override
 		public String toString() {
-			return "isWidget";
+			return "isWidget(" + type + ")";
 		}
 	}
 }
