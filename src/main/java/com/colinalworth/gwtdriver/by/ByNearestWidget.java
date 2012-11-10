@@ -1,4 +1,4 @@
-package com.colinalworth.gwtdriver;
+package com.colinalworth.gwtdriver.by;
 
 import java.util.Collections;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.colinalworth.gwtdriver;
+package com.colinalworth.gwtdriver.by;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,6 @@ import org.openqa.selenium.WebElement;
 
 import com.colinalworth.gwtdriver.invoke.ClientMethodsFactory;
 import com.colinalworth.gwtdriver.invoke.ExportedMethods;
-import com.colinalworth.gwtdriver.models.GwtWidget.ByWidget;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ByGwtClass extends By {

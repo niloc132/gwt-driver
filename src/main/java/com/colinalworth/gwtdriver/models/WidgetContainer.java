@@ -8,6 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.pagefactory.ByChained;
 
+import com.colinalworth.gwtdriver.by.ByWidget;
 import com.google.gwt.user.client.ui.HasWidgets;
 
 /**
