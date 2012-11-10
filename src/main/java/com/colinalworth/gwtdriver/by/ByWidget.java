@@ -27,7 +27,7 @@ public class ByWidget extends By {
 	public List<WebElement> findElements(SearchContext context) {
 		List<WebElement> elts = context.findElements(By.xpath(".//*"));
 
-		System.out.println("Searching in " + context + " for any widget");
+		System.out.println("Searching in " + context + " for all " + type);
 		List<WebElement> ret = new ArrayList<WebElement>();
 		ExportedMethods m = ClientMethodsFactory.create(ExportedMethods.class, driver);
 		for (WebElement elt : elts) {
@@ -45,6 +45,8 @@ public class ByWidget extends By {
 	@Override
 	public WebElement findElement(SearchContext context) {
 		List<WebElement> elts = context.findElements(By.xpath(".//*"));
+
+		System.out.println("Searching in " + context + " for any " + type);
 		ExportedMethods m = ClientMethodsFactory.create(ExportedMethods.class, driver);
 		for (WebElement elt : elts) {
 			String matches = m.instanceofwidget(elt, type);
