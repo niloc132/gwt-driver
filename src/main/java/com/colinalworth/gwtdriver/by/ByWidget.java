@@ -25,7 +25,7 @@ public class ByWidget extends By {
 	}
 	@Override
 	public List<WebElement> findElements(SearchContext context) {
-		List<WebElement> elts = context.findElements(By.xpath(".//*"));
+		List<WebElement> elts = context.findElements(By.xpath(".|.//*"));
 
 		System.out.println("Searching in " + context + " for all " + type);
 		List<WebElement> ret = new ArrayList<WebElement>();

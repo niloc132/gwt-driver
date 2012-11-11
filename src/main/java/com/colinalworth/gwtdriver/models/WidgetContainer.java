@@ -1,6 +1,7 @@
 package com.colinalworth.gwtdriver.models;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -9,6 +10,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.pagefactory.ByChained;
 
 import com.colinalworth.gwtdriver.by.ByWidget;
+import com.colinalworth.gwtdriver.by.FasterByChained;
 import com.google.gwt.user.client.ui.HasWidgets;
 
 /**
@@ -31,10 +33,10 @@ public class WidgetContainer extends GwtWidget<GwtWidgetFinder<WidgetContainer>>
 	 * @return
 	 */
 	public List<GwtWidget<?>> findWidgets(By by) {
-		List<WebElement> elts = getElement().findElements(new ByChained(by, new ByWidget(getDriver())));
-		System.out.println("elts found " + elts.size());
+		LinkedHashSet<WebElement> eltsSet = new LinkedHashSet<WebElement>(getElement().findElements(new ByChained(by, new ByWidget(getDriver()))));
+		System.out.println("elts found " + eltsSet.size());
 		List<GwtWidget<?>> children = new ArrayList<GwtWidget<?>>();
-		for (WebElement elt : elts) {
+		for (WebElement elt : eltsSet) {
 			children.add(new GwtWidget<GwtWidgetFinder<?>>(getDriver(), elt));
 		}
 		return children;
@@ -49,7 +51,7 @@ public class WidgetContainer extends GwtWidget<GwtWidgetFinder<WidgetContainer>>
 	 * @return
 	 */
 	public GwtWidget<?> findWidget(By by) {
-		WebElement elt = getElement().findElement(new ByChained(/*by, */new ByWidget(getDriver())));
+		WebElement elt = getElement().findElement(new FasterByChained(by, new ByWidget(getDriver())));
 		return new GwtWidget<GwtWidgetFinder<?>>(getDriver(), elt);
 	}
 

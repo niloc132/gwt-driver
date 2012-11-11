@@ -44,12 +44,12 @@ public class SimpleWidgetTest {
 			WidgetContainer widget = new GwtRootPanel(wd);
 			assert widget.as(GwtRootPanel.class) != null;
 
-			List<GwtWidget<?>> children = widget.findWidgets(By.xpath("*"));
-			assert children.size() == 2 : children.size();
+			List<GwtWidget<?>> children = widget.findWidgets(By.xpath(".//*"));
+			assert children.size() == 3 : children.size();
 			GwtLabel label = children.get(0).as(GwtLabel.class);
 
 			assert label != null;
-			assert label.getText().equals("testing");
+			assert label.getText().equals("testing") : label.getText();
 
 		} finally {
 			wd.close();
