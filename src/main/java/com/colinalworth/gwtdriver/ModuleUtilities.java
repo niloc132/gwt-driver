@@ -31,15 +31,22 @@ public class ModuleUtilities {
 				"}" +
 				"return n;");
 	}
-	
+
 	public static Object executeExportedFunction(String method, WebDriver driver, Object... args) {
 		return executeExportedFunction(findModules(driver).get(0), method, driver, args);
 	}
-	
+
 	public static Object executeExportedFunction(String module, String method, WebDriver driver, Object... args) {
+		System.out.print("running " + method + "(");
+		for (Object obj : args) {
+			System.out.print(obj + ", ");
+		}
+		System.out.println(")");
 		Object[] allArgs = new Object[args.length + 1];
 		allArgs[0] = method;
 		System.arraycopy(args, 0, allArgs, 1, args.length);
-		return ((JavascriptExecutor)driver).executeAsyncScript("_"+module+"_se.apply(this, arguments)", allArgs);
+		Object ret = ((JavascriptExecutor)driver).executeAsyncScript("_"+module+"_se.apply(this, arguments)", allArgs);
+		System.out.println("\t" + ret);
+		return ret;
 	}
 }

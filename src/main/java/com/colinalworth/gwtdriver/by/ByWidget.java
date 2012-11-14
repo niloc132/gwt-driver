@@ -25,33 +25,33 @@ public class ByWidget extends By {
 	}
 	@Override
 	public List<WebElement> findElements(SearchContext context) {
-		List<WebElement> elts = context.findElements(By.xpath(".|.//*"));
+		List<WebElement> elts = context.findElements(By.xpath("."));
 
-		System.out.println("Searching in " + context + " for all " + type);
+//		System.out.println("Searching in " + context + " for all " + type);
 		List<WebElement> ret = new ArrayList<WebElement>();
 		ExportedMethods m = ClientMethodsFactory.create(ExportedMethods.class, driver);
 		for (WebElement elt : elts) {
 			String matches = m.instanceofwidget(elt, type);
 
-			System.out.println("ByWidget\t" + matches + "\t" + elt.getTagName() + ": " + elt.getText());
+//			System.out.println("ByWidget\t" + matches + "\t" + elt.getTagName() + ": " + elt.getText());
 			if ("true".equals(matches)) {
 				ret.add(elt);
 			}
 		}
-		System.out.println("Done, found " + ret.size());
+//		System.out.println("Done, found " + ret.size());
 
 		return ret;
 	}
 	@Override
 	public WebElement findElement(SearchContext context) {
-		List<WebElement> elts = context.findElements(By.xpath(".//*"));
+		List<WebElement> elts = context.findElements(By.xpath("."));
 
-		System.out.println("Searching in " + context + " for any " + type);
+//		System.out.println("Searching in " + context + " for any " + type);
 		ExportedMethods m = ClientMethodsFactory.create(ExportedMethods.class, driver);
 		for (WebElement elt : elts) {
 			String matches = m.instanceofwidget(elt, type);
 
-			System.out.println("ByWidget\t" + matches + "\t" + elt.getTagName() + ": " + elt.getText());
+//			System.out.println("ByWidget\t" + matches + "\t" + elt.getTagName() + ": " + elt.getText());
 			if ("true".equals(matches)) {
 				return elt;
 			}

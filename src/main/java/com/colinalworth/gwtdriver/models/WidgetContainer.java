@@ -10,7 +10,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.pagefactory.ByChained;
 
 import com.colinalworth.gwtdriver.by.ByWidget;
-import com.colinalworth.gwtdriver.by.FasterByChained;
+import com.colinalworth.gwtdriver.by.CheatingByChained;
 import com.google.gwt.user.client.ui.HasWidgets;
 
 /**
@@ -51,7 +51,7 @@ public class WidgetContainer extends GwtWidget<GwtWidgetFinder<WidgetContainer>>
 	 * @return
 	 */
 	public GwtWidget<?> findWidget(By by) {
-		WebElement elt = getElement().findElement(new FasterByChained(by, new ByWidget(getDriver())));
+		WebElement elt = getElement().findElement(new CheatingByChained(by, new ByWidget(getDriver())));
 		return new GwtWidget<GwtWidgetFinder<?>>(getDriver(), elt);
 	}
 

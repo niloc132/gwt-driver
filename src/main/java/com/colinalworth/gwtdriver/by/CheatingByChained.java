@@ -9,14 +9,13 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.pagefactory.ByChained;
 
 /**
- * Speeds up the last By in the chain by only running it until it finds something.
- * 
+ * Cheats by only looking for one item at each level
  * @author colin
  *
  */
-public class FasterByChained extends By {
+public class CheatingByChained extends By {
 	private By[] bys;
-	public FasterByChained(By... bys) {
+	public CheatingByChained(By... bys) {
 		this.bys = bys;
 	}
 	@Override
@@ -25,25 +24,26 @@ public class FasterByChained extends By {
 	}
 	@Override
 	public WebElement findElement(SearchContext context) {
-		By[] firstBys = new By[bys.length - 1];
-		System.arraycopy(bys, 0, firstBys, 0, firstBys.length);
-		List<WebElement> elts = new ByChained(firstBys).findElements(context);
-		if (elts == null) { 
-			throw new NoSuchElementException("Cannot locate element using " + this);
-		}
-		for (WebElement elt : elts) {
-			try {
-				return elt.findElement(bys[bys.length - 1]);
-			} catch (NoSuchElementException ex) {
-				continue;
+		WebElement elt = null;
+		for (By by : bys) {
+			if (elt == null) {
+				elt = by.findElement(context);
+			} else {
+				elt = by.findElement(elt);
+			}
+			if (elt == null) { 
+				throw new NoSuchElementException("Cannot locate element using " + this);
 			}
 		}
-		throw new NoSuchElementException("Cannot locate element using " + this);
+		if (elt == null) { 
+			throw new NoSuchElementException("Cannot locate element using " + this);
+		}
+		return elt;
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder stringBuilder = new StringBuilder("FasterByChained(");
+		StringBuilder stringBuilder = new StringBuilder("CheatingByChained(");
 		stringBuilder.append("{");
 
 		boolean first = true;
