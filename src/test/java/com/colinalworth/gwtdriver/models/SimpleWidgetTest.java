@@ -1,16 +1,15 @@
 package com.colinalworth.gwtdriver.models;
 
-import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.seleniumhq.jetty7.server.Server;
+import org.seleniumhq.jetty7.server.handler.ResourceHandler;
 
-import com.google.gwt.core.ext.ServletContainer;
-import com.google.gwt.dev.shell.jetty.JettyLauncher;
-import com.google.gwt.dev.util.log.PrintWriterTreeLogger;
 import com.google.gwt.user.client.ui.RootPanel;
 
 /**
@@ -23,24 +22,35 @@ public class SimpleWidgetTest {
 		private GwtWidget widget;
 	}
 
+	@Test
 	public void testSmokeTestWidget() {
 		SmokeTestWidget test = new SmokeTestWidget();
 
 
 	}
 
+	@Test
 	public void testWithDriver() throws Exception {
-		//start up server
-		JettyLauncher launcher = new JettyLauncher();
-		launcher.setBindAddress("localhost");
-		ServletContainer server = launcher.start(new PrintWriterTreeLogger(new File("target/www-out.log")), 0, new File("target/www"));
-
-		//start up browser
-		WebDriver wd = new FirefoxDriver();//= new HtmlUnitDriver(true);
-		wd.manage().timeouts().setScriptTimeout(1000, TimeUnit.SECONDS);
-		wd.get("http://" + server.getHost() + ":" + server.getPort() + "/index.html");
-
+		Server server = null;
+		WebDriver wd = null;
 		try {
+			//start webserver
+			server = new Server(0);
+			ResourceHandler handler = new ResourceHandler();
+			handler.setResourceBase("target/www");
+			handler.setDirectoriesListed(true);
+			server.setHandler(handler);
+
+			server.start();
+
+
+			//start up browser
+			wd = new FirefoxDriver();//= new HtmlUnitDriver(true);
+			wd.manage().timeouts().setScriptTimeout(2, TimeUnit.SECONDS);
+			String url = "http://localhost:" + server.getConnectors()[0].getLocalPort() + "/index.html";
+			System.out.println(url);
+			wd.get(url);
+
 			WidgetContainer widget = new GwtRootPanel(wd);
 			assert widget.as(GwtRootPanel.class) != null;
 
@@ -52,8 +62,12 @@ public class SimpleWidgetTest {
 			assert label.getText().equals("testing") : label.getText();
 
 		} finally {
-			wd.close();
-			server.stop();
+			if (wd != null) {
+				wd.close();
+			}
+			if (server != null) {
+				server.stop();
+			}
 		}
 	}
 }
