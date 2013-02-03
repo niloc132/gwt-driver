@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -25,7 +26,7 @@ public class ByNearestWidget extends By {
 
 	@Override
 	public List<WebElement> findElements(SearchContext context) {
-		WebElement elt = findElement(context);
+		WebElement elt = tryFindElement(context);
 		if (elt != null) {
 			return Collections.singletonList(elt);
 		}
@@ -44,9 +45,17 @@ public class ByNearestWidget extends By {
 
 	@Override
 	public WebElement findElement(SearchContext context) {
+		WebElement potentialElement = tryFindElement(context);
+		if (potentialElement == null) {
+			throw new NoSuchElementException("Cannot find a " + widget.getName() + " in " + context);
+		}
+		return potentialElement;
+	}
+	private WebElement tryFindElement(SearchContext context) {
 		WebElement elt = context.findElement(By.xpath("."));
 		ExportedMethods m = ClientMethodsFactory.create(ExportedMethods.class, driver);
-		return m.getContainingWidgetEltOfType(elt, widget.getName());
+		WebElement potentialElement = m.getContainingWidgetEltOfType(elt, widget.getName());
+		return potentialElement;
 	}
 
 	@Override
