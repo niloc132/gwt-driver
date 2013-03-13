@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.seleniumhq.jetty7.server.Server;
 import org.seleniumhq.jetty7.server.handler.ResourceHandler;
 
@@ -65,7 +65,7 @@ public class SimpleWidgetTest {
 
 
 			//start up browser
-			wd = new FirefoxDriver();//= new HtmlUnitDriver(true);
+			wd = new HtmlUnitDriver(true);
 			wd.manage().timeouts().setScriptTimeout(2, TimeUnit.SECONDS);
 			String url = "http://localhost:" + server.getConnectors()[0].getLocalPort() + "/index.html";
 			System.out.println(url);
