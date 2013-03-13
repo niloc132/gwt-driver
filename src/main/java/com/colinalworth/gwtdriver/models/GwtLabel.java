@@ -27,7 +27,7 @@ import com.colinalworth.gwtdriver.models.GwtWidget.ForWidget;
 import com.google.gwt.user.client.ui.Label;
 
 @ForWidget(Label.class)
-public class GwtLabel extends GwtWidget {
+public class GwtLabel extends GwtWidget<GwtWidgetFinder<GwtLabel>> {
 
 	public GwtLabel(WebDriver driver, WebElement element) {
 		super(driver, element);
