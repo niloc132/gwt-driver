@@ -23,13 +23,15 @@ public class ModuleUtilities {
 	public static List<String> findModules(WebDriver driver) {
 		JavascriptExecutor exec = (JavascriptExecutor) driver;
 
-		return (List<String>) exec.executeScript("var n=[];" +
-				"function a(c) {c.$moduleName && n.push(c.$moduleName)};" +
+		List<String> modulesPresent = (List<String>) exec.executeScript("var n=[];" +
+				"function a(c) {c.$moduleName && window['_' + c.$moduleName + '_se'] && n.push(c.$moduleName)};" +
 				"a(window);" +
 				"for (var b=0; b<frames.length;b++) {" +
 					"a(frames[b]);" +
 				"}" +
 				"return n;");
+
+		return modulesPresent;
 	}
 
 	public static Object executeExportedFunction(String method, WebDriver driver, Object... args) {
