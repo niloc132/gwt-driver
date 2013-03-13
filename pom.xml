@@ -4,6 +4,11 @@
 	<groupId>com.colinalworth</groupId>
 	<artifactId>gwt-driver</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<inceptionYear>2012</inceptionYear>
+	<organization>
+		<name>Sencha Labs</name>
+		<url>http://senchalabs.org/</url>
+	</organization>
 	<properties>
 		<selenium.version>2.29.1</selenium.version>
 		<gwt.version>2.5.0</gwt.version>
@@ -11,6 +16,14 @@
 		<java.version>1.6</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
 	<dependencies>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
@@ -151,6 +164,24 @@
 
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<id>license-update</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>update-file-header</goal>
+							<goal>add-third-party</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<licenseName>apache_v2</licenseName>
+				</configuration>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -214,6 +245,25 @@
 										</versionRange>
 										<goals>
 											<goal>exec</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.codehaus.mojo
+										</groupId>
+										<artifactId>
+											license-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.4,)
+										</versionRange>
+										<goals>
+											<goal>add-third-party</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>
