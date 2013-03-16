@@ -26,11 +26,15 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.internal.selenesedriver.FindElements;
 import org.openqa.selenium.support.pagefactory.ByChained;
 
 /**
- * Cheats by only looking for one item at each level
- * @author colin
+ * When looking for only one item, cheats by only looking for one item at each level. Useful only if
+ * you want the first result of each {@link By} operation, otherwise use {@link FasterByChained} or
+ * {@link ByChained}.
+ * <p>
+ * When running {@link FindElements} to search for multiple items, uses ByChained normal.
  *
  */
 public class CheatingByChained extends By {

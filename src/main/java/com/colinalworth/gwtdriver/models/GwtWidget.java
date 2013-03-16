@@ -20,6 +20,7 @@ package com.colinalworth.gwtdriver.models;
  * #L%
  */
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -91,6 +92,12 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 		return null;
 	}
 
+	/**
+	 * Declares that the annotated type is a GwtWidget for a particular Widget subclass. Allows
+	 * multiple GwtWidget models to target the same client widget type, adding different features.
+	 *
+	 */
+	@Documented
 	@Inherited
 	@Target(ElementType.TYPE)
 	@Retention(RetentionPolicy.RUNTIME)

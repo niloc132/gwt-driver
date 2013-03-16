@@ -26,8 +26,8 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 
 /**
- * Tools to get info about the current modules
- * @author colin
+ * Tools to get info about the current modules present on the page, with the GwtDriver module
+ * inherited.
  *
  */
 public class ModuleUtilities {

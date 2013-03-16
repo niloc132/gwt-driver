@@ -22,6 +22,10 @@ package com.colinalworth.gwtdriver.models;
 
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * Experimental PageObject annotation to try finding specific widgets along with other supported
+ * By statements.
+ */
 public @interface Child {
 	Class<? extends Widget> type() default Widget.class;
 }

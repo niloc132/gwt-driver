@@ -35,9 +35,12 @@ import com.google.gwt.user.client.ui.HasWidgets;
 
 /**
  * A Widget that can contain more widgets. A GWT widget type need not implement or extend anything
- * to be mapped to this, but likely implements {@link HasWidgets}.
- * @author colin
- *
+ * to be mapped to this, but likely implements {@link HasWidgets}. 
+ * <p>
+ * The main way to use this type is to invoke {@link #findWidget(By)} and {@link #findWidgets(By)}.
+ * These methods are like WebElement's findElement and findElements - they accept a By, but instead
+ * of returning one or more WebElement instances, they return GwtWidget. These objects can be
+ * transformed into specific subclasses via the {@link #as(Class)} method.
  */
 public class WidgetContainer extends GwtWidget<GwtWidgetFinder<WidgetContainer>> {
 

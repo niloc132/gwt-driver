@@ -33,16 +33,25 @@ import com.colinalworth.gwtdriver.invoke.ClientMethodsFactory;
 import com.colinalworth.gwtdriver.invoke.ExportedMethods;
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * GWT-specific {@code By} implementation that looks for widgets that in the current search context.
+ * Use in conjunction with other {@code By} statements to look for widgets that match a certain
+ * criteria.
+ *
+ */
 public class ByWidget extends By {
 	private final WebDriver driver;
 	private final String type;
+
 	public ByWidget(WebDriver driver) {
 		this(driver, Widget.class);
 	}
+
 	public ByWidget(WebDriver driver, Class<? extends Widget> widgetType) {
 		this.driver = driver;
 		this.type = widgetType.getName();
 	}
+
 	@Override
 	public List<WebElement> findElements(SearchContext context) {
 		List<WebElement> elts = context.findElements(By.xpath("."));

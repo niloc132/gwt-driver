@@ -28,17 +28,49 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.internal.selenesedriver.FindElements;
 
 import com.colinalworth.gwtdriver.invoke.ClientMethodsFactory;
 import com.colinalworth.gwtdriver.invoke.ExportedMethods;
+import com.google.gwt.user.client.ui.IntegerBox;
+import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ValueBoxBase;
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * GWT-specific {@code By} implementation that looks at the current search context and above for the
+ * nearest containing Widget object, and returns the root element of that widget. Always returns
+ * one item, even if multiple items are requested by {@link FindElements}.
+ * <p>
+ * To check if the current element is a widget, use {@link ByWidget} instead. If searching for a
+ * descendent element that is a widget, use another By to find those elements along with a 
+ * {@code ByWidget} to confirm it is a widget.
+ *
+ */
 public class ByNearestWidget extends By {
 	private final WebDriver driver;
 	private final Class<?> widget;
+
+	/**
+	 * Finds the nearest containing widget of any type - anything that extends Widget will be found.
+	 *
+	 * @param driver The driver to use to communicate with the browser.
+	 */
 	public ByNearestWidget(WebDriver driver) {
 		this(driver, Widget.class);
 	}
+
+	/**
+	 * Finds the nearest containing widget of the given type. This will find any subtype of that
+	 * widget, allowing you to pass in {@link ValueBoxBase} and find any {@link TextBox}, 
+	 * {@link TextArea}, {@link IntegerBox}, etc, as these are all subclasses of 
+	 * {@code ValueBoxBase}. Note that interfaces cannot be used, only base classes, and those
+	 * classes *must* extend Widget.
+	 *
+	 * @param driver the driver to use to communicate with the browser
+	 * @param type the type of widget to find
+	 */
 	public ByNearestWidget(WebDriver driver, Class<? extends Widget> type) {
 		this.widget = type;
 		this.driver = driver;
@@ -51,16 +83,6 @@ public class ByNearestWidget extends By {
 			return Collections.singletonList(elt);
 		}
 		return Collections.emptyList();
-
-		//		do {
-		//			String matches = (String) ((JavascriptExecutor)driver).executeAsyncScript("_"+moduleName+"_se.apply(this, arguments)", "instanceofwidget", elt, widget.getName());
-		//			if ("true".equals(matches)) {
-		//				System.out.println("...correct");
-		//				return Collections.singletonList(elt);
-		//			}
-		//			List<WebElement>elts = elt.findElements(By.xpath("parent::node()[(not(html))]"));
-		//			elt = elts.isEmpty() ? null : elts.get(0);
-		//		} while (null != elt);
 	}
 
 	@Override
@@ -71,6 +93,14 @@ public class ByNearestWidget extends By {
 		}
 		return potentialElement;
 	}
+
+	/**
+	 * Helper method to check the local context to find the nearest containing widget without
+	 * throwing an exception.
+	 *
+	 * @param context the search context to examine
+	 * @return the nearest parent element of the specified type, or null if no such element exists
+	 */
 	private WebElement tryFindElement(SearchContext context) {
 		WebElement elt = context.findElement(By.xpath("."));
 		ExportedMethods m = ClientMethodsFactory.create(ExportedMethods.class, driver);

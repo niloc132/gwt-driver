@@ -26,12 +26,17 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.internal.selenesedriver.FindElements;
 import org.openqa.selenium.support.pagefactory.ByChained;
 
 /**
- * Speeds up the last By in the chain by only running it until it finds something.
- * 
- * @author colin
+ * When looking for only one item, speeds up the last By in the chain by only running it until it
+ * finds something.
+ * <p>
+ * When using {@link FindElements}, uses ByChained to find all possible elements as normal.
+ * <p>
+ * Using this class should be functionally eqivelent to using ByChained, except faster in some
+ * cases.
  *
  */
 public class FasterByChained extends By {
