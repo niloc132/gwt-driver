@@ -21,6 +21,10 @@ package com.colinalworth.gwtdriver.models.client;
  */
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -37,6 +41,15 @@ public class SimpleWidgetsEP implements EntryPoint {
 		RootPanel.get().add(panel);
 
 		panel.add(new TextBox());
+		
+		panel.add(new Button("Open dialog", new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				DialogBox box = new DialogBox();
+				box.setText("Heading Text For Dialog");
+				box.show();
+			}
+		}));
 	}
 
 }

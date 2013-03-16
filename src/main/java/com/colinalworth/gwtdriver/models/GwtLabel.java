@@ -20,14 +20,18 @@ package com.colinalworth.gwtdriver.models;
  * #L%
  */
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.colinalworth.gwtdriver.by.ByNearestWidget;
+import com.colinalworth.gwtdriver.by.FasterByChained;
+import com.colinalworth.gwtdriver.models.GwtLabel.GwtLabelFinder;
 import com.colinalworth.gwtdriver.models.GwtWidget.ForWidget;
 import com.google.gwt.user.client.ui.Label;
 
 @ForWidget(Label.class)
-public class GwtLabel extends GwtWidget<GwtWidgetFinder<GwtLabel>> {
+public class GwtLabel extends GwtWidget<GwtLabelFinder> {
 
 	public GwtLabel(WebDriver driver, WebElement element) {
 		super(driver, element);
@@ -35,6 +39,24 @@ public class GwtLabel extends GwtWidget<GwtWidgetFinder<GwtLabel>> {
 
 	public String getText() {
 		return getElement().getText();
+	}
+
+	public static class GwtLabelFinder extends GwtWidgetFinder<GwtLabel> {
+		String text;
+		public GwtLabelFinder withText(String text) {
+			this.text = text;
+			return this;
+		}
+
+		@Override
+		public GwtLabel done() {
+			if (text != null) {
+				elt = elt.findElement(
+						new FasterByChained(By.xpath(".//*[contains(text(), " + escapeToString(text) + ")]"), 
+						new ByNearestWidget(driver, Label.class)));
+			}
+			return new GwtLabel(driver, elt);
+		}
 	}
 
 }

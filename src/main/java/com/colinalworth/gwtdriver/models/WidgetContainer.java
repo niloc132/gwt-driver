@@ -25,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.pagefactory.ByChained;
@@ -73,7 +74,7 @@ public class WidgetContainer extends GwtWidget<GwtWidgetFinder<WidgetContainer>>
 	 * @param by
 	 * @return
 	 */
-	public GwtWidget<?> findWidget(By by) {
+	public GwtWidget<?> findWidget(By by) throws NoSuchElementException {
 		WebElement elt = getElement().findElement(new CheatingByChained(by, new ByWidget(getDriver())));
 		return new GwtWidget<GwtWidgetFinder<?>>(getDriver(), elt);
 	}

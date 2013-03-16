@@ -25,11 +25,15 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.seleniumhq.jetty7.server.Server;
 import org.seleniumhq.jetty7.server.handler.ResourceHandler;
 
+import com.colinalworth.gwtdriver.models.Dialog.DialogFinder;
 import com.google.gwt.user.client.ui.RootPanel;
 
 /**
@@ -65,7 +69,10 @@ public class SimpleWidgetTest {
 
 
 			//start up browser
-			wd = new HtmlUnitDriver(true);
+			DesiredCapabilities cap = new DesiredCapabilities();
+			cap.setBrowserName("firefox");
+			cap.setJavascriptEnabled(true);
+			wd = new HtmlUnitDriver(cap);
 			wd.manage().timeouts().setScriptTimeout(2, TimeUnit.SECONDS);
 			String url = "http://localhost:" + server.getConnectors()[0].getLocalPort() + "/index.html";
 			System.out.println(url);
@@ -75,12 +82,48 @@ public class SimpleWidgetTest {
 			assert widget.as(GwtRootPanel.class) != null;
 
 			List<GwtWidget<?>> children = widget.findWidgets(By.xpath(".//*"));
-			assert children.size() == 3 : children.size();
+			//RootPanel
+			//*Label
+			//*FlowPanel
+			//**TextBox
+			//**Button
+			assert children.size() == 4 : children.size();
+			
+			//find Label by iterating through sub-widgets and as'ing
 			GwtLabel label = children.get(0).as(GwtLabel.class);
-
 			assert label != null;
 			assert label.getText().equals("testing") : label.getText();
 
+			//find label by finder
+			GwtLabel label2 = widget.find(GwtLabel.class).withText("testing").done();
+			assert label2 != null;
+			assert label.getElement().equals(label2.getElement());
+			assert label.getText().equals("testing");
+			
+			//find, click button
+			children.get(3).getElement().click();
+
+			//find dialog by heading
+			Dialog headingDialog = new DialogFinder().withHeading("Heading").withDriver(wd).done();
+			assert headingDialog != null;
+			assert headingDialog.getHeadingText().equals("Heading Text For Dialog");
+			//find dialog by top
+			Dialog topDialog = new DialogFinder().atTop().withDriver(wd).done();
+			assert topDialog != null;
+			assert topDialog.getHeadingText().equals("Heading Text For Dialog");
+
+			assert headingDialog.getElement().equals(topDialog.getElement());
+			
+			Point initialHeaderLoc = topDialog.getElement().getLocation();
+
+			Actions actions = new Actions(wd);
+			actions.dragAndDrop(topDialog.getHeaderElement(), children.get(3).getElement());
+			actions.build().perform();
+			Point movedHeaderLoc = topDialog.getElement().getLocation();
+
+			assert !movedHeaderLoc.equals(initialHeaderLoc);
+			//this line is a little screwy in htmlunit
+//			assert movedHeaderLoc.equals(children.get(3).getElement().getLocation());
 		} finally {
 			if (wd != null) {
 				wd.close();

@@ -78,9 +78,10 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 				}
 			}
 			i = (i instanceof Class) ? ((Class<?>)i).getGenericSuperclass() : null;
-		} while(i != null);
+		} while (i != null);
 		return null;
 	}
+
 	protected <T extends GwtWidgetFinder<?>> T createInstance(Class<T> type) {
 		try {
 			return type.newInstance();
@@ -123,5 +124,21 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	
+	/**
+	 * Helper method to generate a string literal that can be used in an xpath
+	 * @param str
+	 * @return a properly escaped string 
+	 */
+	protected static String escapeToString(String str) {
+		if (!str.contains("'")) {
+			return "'" + str + "'";
+		}
+		if (!str.contains("\"")) {
+			return "\"" + str + "\"";
+		}
+		return "concat('" + str.replace("\'", "',\"'\",'") +"')";
 	}
 }
