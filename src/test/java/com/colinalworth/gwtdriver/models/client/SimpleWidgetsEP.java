@@ -26,6 +26,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -40,13 +41,16 @@ public class SimpleWidgetsEP implements EntryPoint {
 		FlowPanel panel = new FlowPanel();
 		RootPanel.get().add(panel);
 
-		panel.add(new TextBox());
-		
+		final TextBox textBox = new TextBox();
+		textBox.setValue("asdf");
+		panel.add(textBox);
+
 		panel.add(new Button("Open dialog", new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				DialogBox box = new DialogBox();
 				box.setText("Heading Text For Dialog");
+				box.add(new HTML(textBox.getValue()));
 				box.show();
 			}
 		}));

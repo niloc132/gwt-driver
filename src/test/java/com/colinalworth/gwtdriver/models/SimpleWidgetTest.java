@@ -99,7 +99,12 @@ public class SimpleWidgetTest {
 			assert label2 != null;
 			assert label.getElement().equals(label2.getElement());
 			assert label.getText().equals("testing");
-			
+
+			//find, as TextBox as input, verify text and enter new
+			Input textBox = children.get(2).as(Input.class);
+			assert "asdf".equals(textBox.getValue());
+			textBox.sendKeys("fdsa");
+
 			//find, click button
 			children.get(3).getElement().click();
 
@@ -124,6 +129,8 @@ public class SimpleWidgetTest {
 			assert !movedHeaderLoc.equals(initialHeaderLoc);
 			//this line is a little screwy in htmlunit
 //			assert movedHeaderLoc.equals(children.get(3).getElement().getLocation());
+
+			assert topDialog.getElement().getText().contains("fdsa");
 		} finally {
 			if (wd != null) {
 				wd.close();
