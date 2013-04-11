@@ -54,7 +54,7 @@ public class SeleniumExporter implements EntryPoint {
 			@Override
 			public Object apply(JsArray<?> args) {
 				Element elt = args.get(0).cast();
-				String type = (args.<JsArrayString>cast().get(1));
+				String type = ((JsArrayString)args.cast()).get(1);
 				
 				Object instance = DOM.getEventListener(elt);
 				if (instance == null) {
@@ -100,7 +100,7 @@ public class SeleniumExporter implements EntryPoint {
 			@Override
 			public Object apply(JsArray<?> args) {
 				Element elt = args.get(0).cast();
-				String type = (args.<JsArrayString>cast().get(1));
+				String type = ((JsArrayString)args.cast()).get(1);
 				EventListener listener = DOM.getEventListener(elt);
 				while (listener instanceof Widget == false) {
 					if (elt == null) {
