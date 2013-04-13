@@ -140,7 +140,7 @@
 								<argument>com.google.gwt.dev.Compiler</argument>
 								<argument>-war</argument>
 								<argument>${project.build.directory}/www</argument>
-								<argument>com.colinalworth.gwtdriver.models.SimpleWidgets</argument>
+								<argument>org.senchalabs.gwt.gwtdriver.models.SimpleWidgets</argument>
 							</arguments>
 						</configuration>
 					</execution>
