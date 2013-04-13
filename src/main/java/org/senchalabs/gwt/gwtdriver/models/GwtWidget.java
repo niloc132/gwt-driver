@@ -61,6 +61,12 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 	}
 
 	public <W extends GwtWidget<T>, T extends GwtWidgetFinder<W>> T find(Class<W> widgetType) {
+		return find(widgetType, getDriver(), getElement());
+	}
+	public static <W extends GwtWidget<T>, T extends GwtWidgetFinder<W>> T find(Class<W> widgetType, WebDriver driver) {
+		return find(widgetType, driver, null);
+	}
+	public static <W extends GwtWidget<T>, T extends GwtWidgetFinder<W>> T find(Class<W> widgetType, WebDriver driver, WebElement element) {
 		Type i = widgetType;
 		do {
 			if (i instanceof ParameterizedType) {
@@ -68,11 +74,11 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 				if (t.getRawType() == GwtWidget.class) {
 					@SuppressWarnings("unchecked")
 					Class<T> finderType = (Class<T>) t.getActualTypeArguments()[0];
-					
+
 					T instance = createInstance(finderType);
 					if (instance != null) {
-						instance.withDriver(getDriver());
-						instance.withElement(getElement());
+						instance.withDriver(driver);
+						instance.withElement(element);
 						return instance;
 					}
 				}
@@ -82,7 +88,7 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 		return null;
 	}
 
-	protected <T extends GwtWidgetFinder<?>> T createInstance(Class<T> type) {
+	protected static <T extends GwtWidgetFinder<?>> T createInstance(Class<T> type) {
 		try {
 			return type.newInstance();
 		} catch (InstantiationException e) {
