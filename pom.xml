@@ -10,8 +10,8 @@
 		<url>http://senchalabs.org/</url>
 	</organization>
 	<properties>
-		<selenium.version>2.29.1</selenium.version>
-		<gwt.version>2.5.0</gwt.version>
+		<selenium.version>2.32.0</selenium.version>
+		<gwt.version>2.5.1</gwt.version>
 
 		<java.version>1.6</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -119,6 +119,18 @@
 						</configuration>
 					</execution>-->
 				</executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.google.gwt</groupId>
+                        <artifactId>gwt-user</artifactId>
+                        <version>${gwt.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.google.gwt</groupId>
+                        <artifactId>gwt-dev</artifactId>
+                        <version>${gwt.version}</version>
+                    </dependency>
+                </dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
