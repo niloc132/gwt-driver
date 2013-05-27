@@ -20,10 +20,16 @@ package org.senchalabs.gwt.gwtdriver.models;
  * #L%
  */
 
+import com.google.common.base.Function;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.internal.WrapsDriver;
+import org.openqa.selenium.support.ui.FluentWait;
+
+import javax.annotation.Nullable;
+import java.util.concurrent.TimeUnit;
 
 public class GwtWidgetFinder<W extends GwtWidget<?>> {
 	protected WebDriver driver;
@@ -31,7 +37,7 @@ public class GwtWidgetFinder<W extends GwtWidget<?>> {
 	public GwtWidgetFinder<W> withDriver(WebDriver driver) {
 		this.driver = driver;
 		if (elt == null) {
-			elt = driver.findElement(By.xpath(".//body"));
+			elt = driver.findElement(By.tagName("body"));
 		}
 		return this;
 	}
@@ -46,5 +52,22 @@ public class GwtWidgetFinder<W extends GwtWidget<?>> {
 	public W done() {
 		assert getClass() == GwtWidgetFinder.class : "GwtWidgetFinder.done() must be overridden in all subclasses";
 		return (W) new GwtWidget<GwtWidgetFinder<?>>(driver, elt);
+	}
+
+	public W waitFor() {
+		return waitFor(10, TimeUnit.SECONDS);
+	}
+
+	public W waitFor(long duration, TimeUnit unit) {
+		return new FluentWait<WebDriver>(driver)
+				.withTimeout(duration, unit)
+				.ignoring(NotFoundException.class)
+				.until(new Function<WebDriver, W>() {
+			@Nullable
+			@Override
+			public W apply(@Nullable WebDriver webDriver) {
+				return done();
+			}
+		});
 	}
 }
