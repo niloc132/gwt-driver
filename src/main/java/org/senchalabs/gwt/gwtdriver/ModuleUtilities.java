@@ -39,10 +39,10 @@ public class ModuleUtilities {
 	 * @param driver
 	 * @return a list of module names
 	 */
-	@SuppressWarnings("unchecked")
 	public static List<String> findModules(WebDriver driver) {
 		JavascriptExecutor exec = (JavascriptExecutor) driver;
 
+		@SuppressWarnings("unchecked")
 		List<String> modulesPresent = (List<String>) exec.executeScript("var n=[];" +
 				"function a(c) {c.$moduleName && window['_' + c.$moduleName + '_se'] && n.push(c.$moduleName)};" +
 				"a(window);" +
