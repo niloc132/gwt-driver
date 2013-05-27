@@ -150,8 +150,12 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 
 					T instance = createInstance(finderType);
 					if (instance != null) {
-						instance.withDriver(driver);
-						instance.withElement(element);
+						if (driver != null) {
+							instance.withDriver(driver);
+						}
+						if (element != null) {
+							instance.withElement(element);
+						}
 						return instance;
 					}
 				}
