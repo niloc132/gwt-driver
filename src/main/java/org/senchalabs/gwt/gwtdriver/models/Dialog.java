@@ -77,6 +77,7 @@ public class Dialog extends GwtWidget<DialogFinder> {
 		}
 		@Override
 		public Dialog done() {
+			WebElement elt = this.elt;
 			if (heading != null) {
 				String escaped = escapeToString(heading);
 				elt = elt.findElement(new FasterByChained(By.xpath("//body/*"),

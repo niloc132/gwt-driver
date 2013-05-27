@@ -50,6 +50,7 @@ public class GwtLabel extends GwtWidget<GwtLabelFinder> {
 
 		@Override
 		public GwtLabel done() {
+			WebElement elt = this.elt;
 			if (text != null) {
 				elt = elt.findElement(
 						new FasterByChained(By.xpath(".//*[contains(text(), " + escapeToString(text) + ")]"), 
