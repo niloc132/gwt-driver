@@ -46,8 +46,12 @@ public class ModuleUtilities {
 		List<String> modulesPresent = (List<String>) exec.executeScript("var n=[];" +
 				"function a(c) {c.$moduleName && window['_' + c.$moduleName + '_se'] && n.push(c.$moduleName)};" +
 				"a(window);" +
-				"for (var b=0; b<frames.length;b++) {" +
-					"a(frames[b]);" +
+				"try {" +
+					"for (var b=0; b<frames.length;b++) {" +
+						"a(frames[b]);" +
+					"}" +
+				"} catch (ignore) {" +
+					//ignore because it means cross domain activity, and that means not a module
 				"}" +
 				"return n;");
 
