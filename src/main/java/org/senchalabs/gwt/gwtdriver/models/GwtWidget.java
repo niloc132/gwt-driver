@@ -244,10 +244,6 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 		return is.equals("true");//other values are false (i.e. wrong widget type), or null (i.e. not a widget)
 	}
 
-	public boolean isVisible() {
-		return getElement().isDisplayed();
-	}
-
 	/**
 	 * Helper method to generate a string literal that can be used in an xpath
 	 * @param str a string to be escaped for use as an xpath expression
