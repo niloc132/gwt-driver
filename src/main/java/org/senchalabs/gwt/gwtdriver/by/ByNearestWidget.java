@@ -23,25 +23,23 @@ package org.senchalabs.gwt.gwtdriver.by;
 import java.util.Collections;
 import java.util.List;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.internal.selenesedriver.FindElements;
-import org.senchalabs.gwt.gwtdriver.invoke.ClientMethodsFactory;
-import org.senchalabs.gwt.gwtdriver.invoke.ExportedMethods;
-
 import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueBoxBase;
 import com.google.gwt.user.client.ui.Widget;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.senchalabs.gwt.gwtdriver.invoke.ClientMethodsFactory;
+import org.senchalabs.gwt.gwtdriver.invoke.ExportedMethods;
 
 /**
  * GWT-specific {@code By} implementation that looks at the current search context and above for the
  * nearest containing Widget object, and returns the root element of that widget. Always returns
- * one item, even if multiple items are requested by {@link FindElements}.
+ * one item, even if multiple items are requested by {@link SearchContext#findElements}.
  * <p>
  * To check if the current element is a widget, use {@link ByWidget} instead. If searching for a
  * descendent element that is a widget, use another By to find those elements along with a 
