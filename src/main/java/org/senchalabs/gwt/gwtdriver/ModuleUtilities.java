@@ -20,7 +20,10 @@ package org.senchalabs.gwt.gwtdriver;
  * #L%
  */
 
+
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -31,6 +34,7 @@ import org.openqa.selenium.WebDriver;
  *
  */
 public class ModuleUtilities {
+  private static final Logger LOGGER = Logger.getLogger(ModuleUtilities.class.getName());
 	/**
 	 * Examines the current page for any window with a $moduleName defined on it. Should return
 	 * a list of names if any are present - typically will return only one entry, or none if GWT
@@ -63,16 +67,21 @@ public class ModuleUtilities {
 	}
 
 	public static Object executeExportedFunction(String module, String method, WebDriver driver, Object... args) {
-		System.out.print("running " + method + "(");
-		for (Object obj : args) {
-			System.out.print(obj + ", ");
+		if (LOGGER.isLoggable(Level.FINEST)) {
+			LOGGER.finest("running " + method + "(");
+			for (Object obj : args) {
+				LOGGER.finest(obj + ", ");
+			}
+			LOGGER.finest(")");
 		}
-		System.out.println(")");
 		Object[] allArgs = new Object[args.length + 1];
 		allArgs[0] = method;
 		System.arraycopy(args, 0, allArgs, 1, args.length);
 		Object ret = ((JavascriptExecutor)driver).executeAsyncScript("_"+module+"_se.apply(this, arguments)", allArgs);
-		System.out.println("\t" + ret);
+
+		if (LOGGER.isLoggable(Level.FINEST)) {
+			LOGGER.finest("\t" + ret);
+		}
 		return ret;
 	}
 }

@@ -30,13 +30,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
+import com.google.gwt.user.client.ui.Widget;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.senchalabs.gwt.gwtdriver.invoke.ClientMethodsFactory;
 import org.senchalabs.gwt.gwtdriver.invoke.ExportedMethods;
 import org.senchalabs.gwt.gwtdriver.models.GwtWidget.ForWidget;
-
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Represents a GWT Widget class. Subclasses should add appropriate methods to enable basic interaction
@@ -222,7 +221,7 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 			//w's ctor throew an exception
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			//security manage says no
+			//security manager says no
 			e.printStackTrace();
 		}
 		return null;

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import com.google.gwt.user.client.ui.HasWidgets;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -31,8 +32,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.pagefactory.ByChained;
 import org.senchalabs.gwt.gwtdriver.by.ByWidget;
 import org.senchalabs.gwt.gwtdriver.by.CheatingByChained;
-
-import com.google.gwt.user.client.ui.HasWidgets;
 
 /**
  * A Widget that can contain more widgets. A GWT widget type need not implement or extend anything
@@ -58,7 +57,6 @@ public class WidgetContainer extends GwtWidget<GwtWidgetFinder<WidgetContainer>>
 	 */
 	public List<GwtWidget<?>> findWidgets(By by) {
 		LinkedHashSet<WebElement> eltsSet = new LinkedHashSet<WebElement>(getElement().findElements(new ByChained(by, new ByWidget(getDriver()))));
-		System.out.println("elts found " + eltsSet.size());
 		List<GwtWidget<?>> children = new ArrayList<GwtWidget<?>>();
 		for (WebElement elt : eltsSet) {
 			children.add(new GwtWidget<GwtWidgetFinder<?>>(getDriver(), elt));
