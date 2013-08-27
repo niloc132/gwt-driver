@@ -144,7 +144,7 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 		do {
 			if (i instanceof ParameterizedType) {
 				ParameterizedType t = (ParameterizedType) i;
-				if (t.getRawType() == GwtWidget.class) {
+				if (isWidgetDefinedType(t.getRawType(),widgetType)) {
 					@SuppressWarnings("unchecked")
 					Class<T> finderType = (Class<T>) t.getActualTypeArguments()[0];
 
@@ -163,6 +163,15 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 			i = (i instanceof Class) ? ((Class<?>)i).getGenericSuperclass() : null;
 		} while (i != null);
 		return null;
+	}
+	
+	private static boolean isWidgetDefinedType(Type t,Class<?>clazz) {
+		if(t.equals(clazz)){
+			return true;
+		}else if(!clazz.equals(Object.class)){
+			return isWidgetDefinedType(t, clazz.getSuperclass());
+		}
+		return false;
 	}
 
 	private static <T extends GwtWidgetFinder<?>> T createInstance(Class<T> type) {
