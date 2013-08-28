@@ -166,7 +166,10 @@ public class SeleniumExporter implements EntryPoint {
 		protected Callback() {
 		}
 		public native void invoke(Object result) /*-{
-			this(result);
+			this(['success', result]);
+		}-*/;
+		public native void fail(String message) /*-{
+			this(['error: ' + message]);
 		}-*/;
 	}
 	private static native Object get(JsArray<?> array, int i) /*-{
@@ -186,12 +189,12 @@ public class SeleniumExporter implements EntryPoint {
 						logger.info("response ready: " + response);
 						callback.invoke(response);
 					} catch (Exception e) {
-						logger.severe("Error occured: " + e.getMessage());
-						callback.invoke("Error occured: " + e.getMessage());
+						logger.severe("Error occurred: " + e.getMessage());
+						callback.fail("Error occurred: " + e.getMessage());
 					}
 				} else {
 					logger.severe("Method could not be invoked: " + method);
-					callback.invoke("Error: could not find method '" + method + "'");
+					callback.fail("Error: could not find method '" + method + "'");
 				}
 			}
 
@@ -201,7 +204,7 @@ public class SeleniumExporter implements EntryPoint {
 
 			@Override
 			public void onFailure(Throwable reason) {
-				callback.invoke("Call failed: " + reason.getMessage());
+				callback.fail("Call failed: " + reason.getMessage());
 			}
 		});
 	}

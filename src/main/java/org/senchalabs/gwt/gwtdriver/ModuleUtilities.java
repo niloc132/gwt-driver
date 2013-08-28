@@ -34,7 +34,14 @@ import org.openqa.selenium.WebDriver;
  *
  */
 public class ModuleUtilities {
-  private static final Logger LOGGER = Logger.getLogger(ModuleUtilities.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ModuleUtilities.class.getName());
+	private static final String NO_DEFAULT_ERROR = "error: no default module";
+	public static final String EXPORTED_FUNCTION_SCRIPT = "(!!window.default_module_se)" +
+			"?" +
+				"window.default_module_se.apply(this, arguments)" +
+			":" +
+				"arguments[arguments.length-1](['"+NO_DEFAULT_ERROR+"'])";
+
 	/**
 	 * Examines the current page for any window with a $moduleName defined on it. Should return
 	 * a list of names if any are present - typically will return only one entry, or none if GWT
@@ -59,14 +66,11 @@ public class ModuleUtilities {
 				"}" +
 				"return n;");
 
+		LOGGER.fine("Found modules:" + modulesPresent);
 		return modulesPresent;
 	}
 
 	public static Object executeExportedFunction(String method, WebDriver driver, Object... args) {
-		return executeExportedFunction(findModules(driver).get(0), method, driver, args);
-	}
-
-	public static Object executeExportedFunction(String module, String method, WebDriver driver, Object... args) {
 		if (LOGGER.isLoggable(Level.FINEST)) {
 			LOGGER.finest("running " + method + "(");
 			for (Object obj : args) {
@@ -77,11 +81,37 @@ public class ModuleUtilities {
 		Object[] allArgs = new Object[args.length + 1];
 		allArgs[0] = method;
 		System.arraycopy(args, 0, allArgs, 1, args.length);
-		Object ret = ((JavascriptExecutor)driver).executeAsyncScript("_"+module+"_se.apply(this, arguments)", allArgs);
+		List<?> ret;
+		JavascriptExecutor executor = (JavascriptExecutor) driver;
+		ret = (List<?>) executor.executeAsyncScript(EXPORTED_FUNCTION_SCRIPT, allArgs);
+		if (ret.size() == 1 && ret.get(0).equals(NO_DEFAULT_ERROR)) {
+			//error, try again after wiring up module
+			if (setDefaultModule(findModules(driver).get(0), executor)) {
+				//success, try one more time...
+				ret = (List<?>) executor.executeAsyncScript(EXPORTED_FUNCTION_SCRIPT, allArgs);
+			} else {
+				throw new RuntimeException("Unable to find a module to talk with - did you add an inherits for SeleniumExporter?");
+			}
+		}
+		if (ret.size() == 1) {
+			//error, log and throw
+			LOGGER.warning("Error executing script: " + ret.get(0));
+			throw new RuntimeException(ret.get(0).toString());
+		}
 
 		if (LOGGER.isLoggable(Level.FINEST)) {
 			LOGGER.finest("\t" + ret);
 		}
-		return ret;
+		return ret.get(1);
+	}
+
+	public static Object executeExportedFunction(String module, String method, WebDriver driver, Object... args) {
+		setDefaultModule(module, (JavascriptExecutor) driver);
+		return executeExportedFunction(method, driver, args);
+	}
+
+	private static boolean setDefaultModule(String module, JavascriptExecutor driver) {
+		LOGGER.fine("Setting default module to " + module + " with " + driver);
+		return (Boolean) driver.executeScript("return !!(window.default_module_se=window._" + module + "_se);");
 	}
 }

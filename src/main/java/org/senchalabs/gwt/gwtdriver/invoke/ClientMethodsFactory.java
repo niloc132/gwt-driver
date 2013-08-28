@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import net.sourceforge.htmlunit.corejs.javascript.ConsString;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.senchalabs.gwt.gwtdriver.ModuleUtilities;
@@ -32,7 +33,7 @@ import org.senchalabs.gwt.gwtdriver.ModuleUtilities;
 /**
  * Allows simple invocation of exported methods from GWT. Must follow the same
  * rules as {@link JavascriptExecutor#executeAsyncScript(String, Object...)} in
- * both the Java/Test and Java/Gwt/Client code.
+ * both the Java/Test and Java/Gwt/Client code in terms of arguments passed.
  *
  */
 public class ClientMethodsFactory {
@@ -48,9 +49,15 @@ public class ClientMethodsFactory {
 
 		@Override
 		public Object invoke(Object instance, Method method, Object[] args) throws Throwable {
-			Object ret = ModuleUtilities.executeExportedFunction(module, method.getName(), driver, args);
-			if (method.getReturnType() != String.class && ret instanceof String) {
-				throw new RuntimeException(ret.toString());
+			Object ret;
+			if (module != null) {
+				ret = ModuleUtilities.executeExportedFunction(module, method.getName(), driver, args);
+			} else {
+				ret = ModuleUtilities.executeExportedFunction(method.getName(), driver, args);
+			}
+			//normalize string, apparently htmlunit gives us junk values from time to time
+			if (ret instanceof ConsString) {
+				ret = ret.toString();
 			}
 			return ret;
 		}
@@ -64,7 +71,7 @@ public class ClientMethodsFactory {
 	 * @return
 	 */
 	public static <T extends ClientMethods> T create(Class<T> type, WebDriver driver) {
-		return create(type, driver, ModuleUtilities.findModules(driver).get(0));
+		return create(type, driver, null);
 	}
 
 	/**
