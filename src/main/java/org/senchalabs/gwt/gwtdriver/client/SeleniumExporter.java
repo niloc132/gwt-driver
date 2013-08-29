@@ -58,7 +58,7 @@ public class SeleniumExporter implements EntryPoint {
 				
 				Object instance = DOM.getEventListener(elt);
 				if (instance == null) {
-					return "null";
+					return "false";
 				}
 				return "" + isOfType(type, instance);
 			}

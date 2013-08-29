@@ -56,18 +56,13 @@ public class ByWidget extends By {
 	public List<WebElement> findElements(SearchContext context) {
 		List<WebElement> elts = context.findElements(By.xpath("."));
 
-//		System.out.println("Searching in " + context + " for all " + type);
 		List<WebElement> ret = new ArrayList<WebElement>();
 		ExportedMethods m = ClientMethodsFactory.create(ExportedMethods.class, driver);
 		for (WebElement elt : elts) {
-			String matches = m.instanceofwidget(elt, type);
-
-//			System.out.println("ByWidget\t" + matches + "\t" + elt.getTagName() + ": " + elt.getText());
-			if ("true".equals(matches)) {
+			if (m.instanceofwidget(elt, type)) {
 				ret.add(elt);
 			}
 		}
-//		System.out.println("Done, found " + ret.size());
 
 		return ret;
 	}
@@ -75,13 +70,9 @@ public class ByWidget extends By {
 	public WebElement findElement(SearchContext context) {
 		List<WebElement> elts = context.findElements(By.xpath("."));
 
-//		System.out.println("Searching in " + context + " for any " + type);
 		ExportedMethods m = ClientMethodsFactory.create(ExportedMethods.class, driver);
 		for (WebElement elt : elts) {
-			String matches = m.instanceofwidget(elt, type);
-
-//			System.out.println("ByWidget\t" + matches + "\t" + elt.getTagName() + ": " + elt.getText());
-			if ("true".equals(matches)) {
+			if (m.instanceofwidget(elt, type)) {
 				return elt;
 			}
 		}

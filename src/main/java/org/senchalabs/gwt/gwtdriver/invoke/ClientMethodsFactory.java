@@ -33,7 +33,11 @@ import org.senchalabs.gwt.gwtdriver.ModuleUtilities;
 /**
  * Allows simple invocation of exported methods from GWT. Must follow the same
  * rules as {@link JavascriptExecutor#executeAsyncScript(String, Object...)} in
- * both the Java/Test and Java/Gwt/Client code in terms of arguments passed.
+ * both the Java/Test and Java/Gwt/Client code in terms of arguments passed,
+ * expect for primitives, which must be a string (unless returning them from
+ * jsni, in which case it should be treated as a long/Long as per
+ * executeAsyncScript) from the client, and will be returned as a int/double/
+ * boolean into code.
  *
  */
 public class ClientMethodsFactory {
@@ -54,6 +58,16 @@ public class ClientMethodsFactory {
 				ret = ModuleUtilities.executeExportedFunction(module, method.getName(), driver, args);
 			} else {
 				ret = ModuleUtilities.executeExportedFunction(method.getName(), driver, args);
+			}
+			if (method.getReturnType().isPrimitive() && method.getReturnType() != long.class) {
+				// any primitive coming back from gwt will be a string, parse it
+				if (method.getReturnType() == int.class) {
+					return Integer.parseInt(ret.toString());
+				} else if (method.getReturnType() == double.class) {
+					return Double.parseDouble(ret.toString());
+				} else if (method.getReturnType() == boolean.class) {
+					return Boolean.parseBoolean(ret.toString());
+				}
 			}
 			//normalize string, apparently htmlunit gives us junk values from time to time
 			if (ret instanceof ConsString) {

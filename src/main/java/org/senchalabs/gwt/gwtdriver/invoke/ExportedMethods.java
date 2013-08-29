@@ -23,9 +23,9 @@ package org.senchalabs.gwt.gwtdriver.invoke;
 import org.openqa.selenium.WebElement;
 
 public interface ExportedMethods extends ClientMethods {
-	String isWidget(WebElement elt);
+	boolean isWidget(WebElement elt);
 	
-	String instanceofwidget(WebElement elt, String type);
+	boolean instanceofwidget(WebElement elt, String type);
 	
 	String getContainingWidgetClass(WebElement elt);
 	

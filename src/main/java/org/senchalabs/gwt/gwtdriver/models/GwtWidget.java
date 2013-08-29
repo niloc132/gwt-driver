@@ -67,6 +67,7 @@ import org.senchalabs.gwt.gwtdriver.models.GwtWidget.ForWidget;
 public class GwtWidget<F extends GwtWidgetFinder<?>> {
 	private final WebDriver driver;
 	private final WebElement element;
+	private final ExportedMethods methods;
 
 	/**
 	 * Creates a new GwtWidget type. Subclasses must invoke this with non-null arguments, and must declare
@@ -78,8 +79,10 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 		assert element != null && driver != null;
 		this.driver = driver;
 		this.element = element;
-		
-		assert is(getClass()) : "";
+
+		methods = ClientMethodsFactory.create(ExportedMethods.class, driver);
+
+		assert is(getClass()) : "Not actually a widget, shouldn't be wrapped up as a widget";
 	}
 
 	/**
@@ -218,7 +221,7 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 			//ctor params don't match
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			//w's ctor throew an exception
+			//w's ctor threw an exception
 			e.printStackTrace();
 		} catch (SecurityException e) {
 			//security manager says no
@@ -237,10 +240,8 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 		if (widgetType == null) {
 			throw new IllegalArgumentException("Class " + clazz + " is not annotated with ForWidget, cannot check its type");
 		}
-		ExportedMethods m = ClientMethodsFactory.create(ExportedMethods.class, driver);
-		String is = m.instanceofwidget(element, widgetType.value().getName());
-		
-		return is.equals("true");//other values are false (i.e. wrong widget type), or null (i.e. not a widget)
+
+		return  methods.instanceofwidget(element, widgetType.value().getName());
 	}
 
 	/**
