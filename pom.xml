@@ -1,21 +1,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
 	<groupId>org.senchalabs.gwt</groupId>
 	<artifactId>gwt-driver</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<name>GWT bindings for WebDriver</name>
 	<inceptionYear>2012</inceptionYear>
 	<organization>
 		<name>Sencha Labs</name>
 		<url>http://senchalabs.org/</url>
 	</organization>
-	<properties>
-		<selenium.version>2.35.0</selenium.version>
-		<gwt.version>2.5.1</gwt.version>
-
-		<java.version>1.6</java.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+	<scm>
+		<connection>scm:git:ssh://git@github.com:niloc132/gwt-driver.git</connection>
+		<developerConnection>scm:git:https://github.com/niloc132/gwt-driver.git</developerConnection>
+		<url>https://github.com/niloc132/gwt-driver</url>
+	</scm>
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
@@ -24,6 +28,13 @@
 			<comments>A business-friendly OSS license</comments>
 		</license>
 	</licenses>
+	<properties>
+		<selenium.version>2.35.0</selenium.version>
+		<gwt.version>2.5.1</gwt.version>
+
+		<java.version>1.6</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
