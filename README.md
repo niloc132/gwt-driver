@@ -13,3 +13,6 @@ GWT bindings for Selenium WebDriver.
 
 ##Extensions
 * <a href="https://github.com/niloc132/gxt-driver">GXT Driver</a>
+
+##Samples
+* <a href="https://github.com/niloc132/gwt-driver-sample">GWT & GXT Sample</a>
