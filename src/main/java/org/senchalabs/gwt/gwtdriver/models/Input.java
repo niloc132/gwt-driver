@@ -46,8 +46,8 @@ public class Input extends GwtWidget<GwtWidgetFinder<Input>>{
 		super(driver, element);
 	}
 
-	public void sendKeys(String str) {
-		getElement().sendKeys(str);
+	public void sendKeys(CharSequence... keys) {
+		getElement().sendKeys(keys);
 	}
 
 	public String getValue() {
