@@ -20,6 +20,7 @@ package org.senchalabs.gwt.gwtdriver.models;
  * #L%
  */
 
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.senchalabs.gwt.gwtdriver.models.GwtWidget.ForWidget;
@@ -46,9 +47,13 @@ public class Input extends GwtWidget<GwtWidgetFinder<Input>>{
 		super(driver, element);
 	}
 
-	public void sendKeys(String str) {
-		getElement().sendKeys(str);
+	public void sendKeys(String keys) {
+		getElement().sendKeys(keys);
 	}
+	
+	public void sendKey(Keys key) {
+        sendKeys(key.toString());
+    }
 
 	public String getValue() {
 		return getElement().getAttribute("value");
