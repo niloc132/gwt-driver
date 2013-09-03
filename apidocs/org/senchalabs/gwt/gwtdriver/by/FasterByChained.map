@@ -1,6 +1,6 @@
 <map id="G" name="G">
 <area shape="rect" id="node1_0" href="./FasterByChained.html" title="org.senchalabs.gwt.gwtdriver.by.FasterByChained" alt="" coords="137,17,258,42"/>
 <area shape="rect" id="node1" href="./FasterByChained.html" title="&lt;TABLE&gt;" alt="" coords="126,5,269,53"/>
-<area shape="rect" id="node2_1" href="http://java.sun.com/j2se/1.4.2/docs/api/org/openqa/selenium/By.html" title="org.openqa.selenium.By" alt="" coords="24,17,59,42"/>
-<area shape="rect" id="node2" href="http://java.sun.com/j2se/1.4.2/docs/api/org/openqa/selenium/By.html" title="&lt;TABLE&gt;" alt="" coords="5,5,77,53"/>
+<area shape="rect" id="node2_1" href="http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/By.html" title="org.openqa.selenium.By" alt="" coords="24,17,59,42"/>
+<area shape="rect" id="node2" href="http://selenium.googlecode.com/svn/trunk/docs/api/java/org/openqa/selenium/By.html" title="&lt;TABLE&gt;" alt="" coords="5,5,77,53"/>
 </map>

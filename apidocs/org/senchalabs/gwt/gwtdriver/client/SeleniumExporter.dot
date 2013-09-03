@@ -19,11 +19,11 @@ digraph G {
 	//org.senchalabs.gwt.gwtdriver.client.SeleniumExporter implements com.google.gwt.core.client.EntryPoint
 	c582:p -> c564:p [dir=back,arrowtail=empty,style=dashed];
 	// com.google.gwt.core.client.EntryPoint
-	c582 [label=<<table title="com.google.gwt.core.client.EntryPoint" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p" href="http://java.sun.com/j2se/1.4.2/docs/api/com/google/gwt/core/client/EntryPoint.html">
+	c582 [label=<<table title="com.google.gwt.core.client.EntryPoint" border="0" cellborder="1" cellspacing="0" cellpadding="2" port="p">
 		<tr><td><table border="0" cellspacing="0" cellpadding="1">
 <tr><td align="center" balign="center"> &#171;interface&#187; </td></tr>
 <tr><td align="center" balign="center"> EntryPoint </td></tr>
 		</table></td></tr>
-		</table>>, URL="http://java.sun.com/j2se/1.4.2/docs/api/com/google/gwt/core/client/EntryPoint.html", fontname="Helvetica", fontcolor="black", fontsize=10.0];
+		</table>>, URL="null", fontname="Helvetica", fontcolor="black", fontsize=10.0];
 }
 
