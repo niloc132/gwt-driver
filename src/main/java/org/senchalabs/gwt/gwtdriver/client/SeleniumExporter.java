@@ -42,7 +42,12 @@ public class SeleniumExporter implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		export(GWT.getModuleName());
-		registerFunction("isWidget", new Function() {
+		exportRegisteredTypes();
+	}
+
+	protected void exportRegisteredTypes() {
+		String exportedMethods = "org.senchalabs.gwt.gwtdriver.invoke.ExportedMethods";
+		registerFunction(exportedMethods, "isWidget", new Function() {
 			@Override
 			public Object apply(JsArray<?> args) {
 				Element elt = args.get(0).cast();
@@ -50,12 +55,12 @@ public class SeleniumExporter implements EntryPoint {
 				return "" + (listener instanceof Widget);
 			}
 		});
-		registerFunction("instanceofwidget", new Function() {
+		registerFunction(exportedMethods, "instanceofwidget", new Function() {
 			@Override
 			public Object apply(JsArray<?> args) {
 				Element elt = args.get(0).cast();
 				String type = ((JsArrayString)args.cast()).get(1);
-				
+
 				Object instance = DOM.getEventListener(elt);
 				if (instance == null) {
 					return "false";
@@ -63,7 +68,7 @@ public class SeleniumExporter implements EntryPoint {
 				return "" + isOfType(type, instance);
 			}
 		});
-		registerFunction("getContainingWidgetClass", new Function() {
+		registerFunction(exportedMethods, "getContainingWidgetClass", new Function() {
 			@Override
 			public Object apply(JsArray<?> args) {
 				Element elt = args.get(0).cast();
@@ -78,7 +83,7 @@ public class SeleniumExporter implements EntryPoint {
 				return listener.getClass().getName();
 			}
 		});
-		registerFunction("getContainingWidgetElt", new Function() {
+		registerFunction(exportedMethods, "getContainingWidgetElt", new Function() {
 			@Override
 			public Object apply(JsArray<?> args) {
 				Element elt = args.get(0).cast();
@@ -96,7 +101,7 @@ public class SeleniumExporter implements EntryPoint {
 				return elt;
 			}
 		});
-		registerFunction("getContainingWidgetEltOfType", new Function() {
+		registerFunction(exportedMethods, "getContainingWidgetEltOfType", new Function() {
 			@Override
 			public Object apply(JsArray<?> args) {
 				Element elt = args.get(0).cast();
@@ -144,6 +149,7 @@ public class SeleniumExporter implements EntryPoint {
 //			}
 //		});
 	}
+
 	private static boolean isOfType(String type, Object instance) {
 		Class<?> currentType = instance.getClass();
 		while (currentType != null && !currentType.getName().equals(Object.class.getName())) {
@@ -154,8 +160,8 @@ public class SeleniumExporter implements EntryPoint {
 		}
 		return false;
 	}
-	public static void registerFunction(String name, Function func) {
-		functions.put(name, func);
+	public static void registerFunction(String declaringType, String methodName, Function func) {
+		functions.put(declaringType + "::" + methodName, func);
 	}
 	private static native void export(String moduleName) /*-{
 		$wnd['_' + moduleName + '_se'] = $entry(function() {
@@ -199,7 +205,7 @@ public class SeleniumExporter implements EntryPoint {
 			}
 
 			private native JsArray<?> splice(JsArray<?> args) /*-{
-				return $wnd.Array.prototype.splice.call(args, 1,args.length - 2);
+				return $wnd.Array.prototype.splice.call(args, 1, args.length - 2);
 			}-*/;
 
 			@Override

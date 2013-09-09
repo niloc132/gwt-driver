@@ -18,6 +18,7 @@
   #L%
   -->
 <module>
+	<inherits name="com.google.gwt.user.User" />
 	<source path="client" />
 	
 	<entry-point class="org.senchalabs.gwt.gwtdriver.client.SeleniumExporter" />

@@ -54,10 +54,11 @@ public class ClientMethodsFactory {
 		@Override
 		public Object invoke(Object instance, Method method, Object[] args) throws Throwable {
 			Object ret;
+			String key = method.getDeclaringClass().getName() + "::" + method.getName();
 			if (module != null) {
-				ret = ModuleUtilities.executeExportedFunction(module, method.getName(), driver, args);
+				ret = ModuleUtilities.executeExportedFunction(module, key, driver, args);
 			} else {
-				ret = ModuleUtilities.executeExportedFunction(method.getName(), driver, args);
+				ret = ModuleUtilities.executeExportedFunction(key, driver, args);
 			}
 			if (method.getReturnType().isPrimitive() && method.getReturnType() != long.class) {
 				// any primitive coming back from gwt will be a string, parse it
