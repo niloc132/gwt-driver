@@ -20,135 +20,82 @@ package org.senchalabs.gwt.gwtdriver.client;
  * #L%
  */
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.JsArrayString;
-import com.google.gwt.core.client.RunAsyncCallback;
+import com.google.gwt.core.client.*;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.ui.Widget;
+import org.senchalabs.gwt.gwtdriver.invoke.ClientMethods;
+import org.senchalabs.gwt.gwtdriver.invoke.ExportedMethods;
 
-public class SeleniumExporter implements EntryPoint {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
+
+public abstract class SeleniumExporter implements EntryPoint {
+	public @interface MethodsFor {
+		Class<?> value();
+	}
+	public @interface Method {
+		String value();
+	}
 	private static final Logger logger = Logger.getLogger(SeleniumExporter.class.getName());
 	private static final Map<String, Function> functions = new HashMap<String, Function>();
-	
+
 	@Override
 	public void onModuleLoad() {
 		export(GWT.getModuleName());
 		exportRegisteredTypes();
 	}
-
-	protected void exportRegisteredTypes() {
-		String exportedMethods = "org.senchalabs.gwt.gwtdriver.invoke.ExportedMethods";
-		registerFunction(exportedMethods, "isWidget", new Function() {
-			@Override
-			public Object apply(JsArray<?> args) {
-				Element elt = args.get(0).cast();
-				EventListener listener = DOM.getEventListener(elt);
-				return "" + (listener instanceof Widget);
+	@MethodsFor(ExportedMethods.class)
+	public static class DefaultExportedMethods {
+		@Method("isWidget")
+		public boolean isWidget(Element elt) {
+			EventListener listener = DOM.getEventListener(elt);
+			return listener instanceof Widget;
+		}
+		@Method("instanceofwidget")
+		public boolean instanceofwidget(Element elt, String type) {
+			Object instance = DOM.getEventListener(elt);
+			if (instance == null) {
+				return false;
 			}
-		});
-		registerFunction(exportedMethods, "instanceofwidget", new Function() {
-			@Override
-			public Object apply(JsArray<?> args) {
-				Element elt = args.get(0).cast();
-				String type = ((JsArrayString)args.cast()).get(1);
-
-				Object instance = DOM.getEventListener(elt);
-				if (instance == null) {
-					return "false";
+			return isOfType(type, instance);
+		}
+		@Method("getContainingWidgetClass")
+		public String getContainingWidgetClass(Element elt) {
+			EventListener listener = DOM.getEventListener(elt);
+			while (listener instanceof Widget == false) {
+				if (elt == null) {
+					return null;
 				}
-				return "" + isOfType(type, instance);
+				elt = elt.getParentElement().cast();
+				listener = DOM.getEventListener(elt);
 			}
-		});
-		registerFunction(exportedMethods, "getContainingWidgetClass", new Function() {
-			@Override
-			public Object apply(JsArray<?> args) {
-				Element elt = args.get(0).cast();
-				EventListener listener = DOM.getEventListener(elt);
-				while (listener instanceof Widget == false) {
-					if (elt == null) {
-						return null;
-					}
-					elt = elt.getParentElement().cast();
-					listener = DOM.getEventListener(elt);
+			return listener.getClass().getName();
+		}
+		@Method("getContainingWidgetEltOfType")
+		public Element getContainingWidgetEltOfType(Element elt, String type) {
+			EventListener listener = DOM.getEventListener(elt);
+			while (listener instanceof Widget == false) {
+				if (elt == null) {
+					return null;
 				}
-				return listener.getClass().getName();
+				elt = elt.getParentElement().cast();
+				if (elt == elt.getOwnerDocument().cast()) {
+					return null;
+				}
+				listener = DOM.getEventListener(elt);
 			}
-		});
-		registerFunction(exportedMethods, "getContainingWidgetElt", new Function() {
-			@Override
-			public Object apply(JsArray<?> args) {
-				Element elt = args.get(0).cast();
-				EventListener listener = DOM.getEventListener(elt);
-				while (listener instanceof Widget == false) {
-					if (elt == null) {
-						return null;
-					}
-					elt = elt.getParentElement().cast();
-					if (elt == elt.getOwnerDocument().cast()) {
-						return null;
-					}
-					listener = DOM.getEventListener(elt);
-				}
-				return elt;
+			//found a real widget
+			Widget w = (Widget) listener;
+			while (w != null && !isOfType(type, w)) {
+				w = w.getParent();
 			}
-		});
-		registerFunction(exportedMethods, "getContainingWidgetEltOfType", new Function() {
-			@Override
-			public Object apply(JsArray<?> args) {
-				Element elt = args.get(0).cast();
-				String type = ((JsArrayString)args.cast()).get(1);
-				EventListener listener = DOM.getEventListener(elt);
-				while (listener instanceof Widget == false) {
-					if (elt == null) {
-						return null;
-					}
-					elt = elt.getParentElement().cast();
-					if (elt == elt.getOwnerDocument().cast()) {
-						return null;
-					}
-					listener = DOM.getEventListener(elt);
-				}
-				//found a real widget
-				Widget w = (Widget) listener;
-				while (w != null && !isOfType(type, w)) {
-					w = w.getParent();
-				}
-				return w == null ? null : w.getElement();
-			}
-		});
-//		registerFunction("getClass", new Function() {
-//			@Override
-//			public Object apply(JsArray<?> args) {
-//				Object obj = get(args, 1);
-//				return obj.getClass().getName();
-//			}
-//		});
-//		registerFunction("instanceOf", new Function() {
-//			@Override
-//			public Object apply(JsArray<?> args) {
-//				String type = (args.<JsArrayString>cast().get(0));
-//				Object instance = (get(args, 1));
-//
-//				Class<?> currentType = instance.getClass();
-//				while (currentType != null && !currentType.getName().equals(Object.class.getName())) {
-//					if (type.equals(currentType.getName())) {
-//						return "" + true;
-//					}
-//					currentType = currentType.getSuperclass();
-//				}
-//				return "" + false;
-//			}
-//		});
+			return w == null ? null : w.getElement();
+		}
 	}
+	protected abstract void exportRegisteredTypes();
 
 	private static boolean isOfType(String type, Object instance) {
 		Class<?> currentType = instance.getClass();
