@@ -28,7 +28,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.internal.WrapsDriver;
 import org.openqa.selenium.support.ui.FluentWait;
 
-import javax.annotation.Nullable;
 import java.util.concurrent.TimeUnit;
 
 public class GwtWidgetFinder<W extends GwtWidget<?>> {
@@ -63,9 +62,8 @@ public class GwtWidgetFinder<W extends GwtWidget<?>> {
 				.withTimeout(duration, unit)
 				.ignoring(NotFoundException.class)
 				.until(new Function<WebDriver, W>() {
-			@Nullable
 			@Override
-			public W apply(@Nullable WebDriver webDriver) {
+			public W apply(WebDriver webDriver) {
 				return done();
 			}
 		});
