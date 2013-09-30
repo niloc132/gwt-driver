@@ -20,12 +20,16 @@ package org.senchalabs.gwt.gwtdriver.client;
  * #L%
  */
 
-import com.google.gwt.core.client.*;
+import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsArrayString;
+import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.ui.Widget;
-import org.senchalabs.gwt.gwtdriver.invoke.ClientMethods;
 import org.senchalabs.gwt.gwtdriver.invoke.ExportedMethods;
 
 import java.util.HashMap;

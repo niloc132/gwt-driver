@@ -20,6 +20,14 @@ package org.senchalabs.gwt.gwtdriver.models;
  * #L%
  */
 
+import com.google.gwt.user.client.ui.Widget;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.senchalabs.gwt.gwtdriver.invoke.ClientMethodsFactory;
+import org.senchalabs.gwt.gwtdriver.invoke.ExportedMethods;
+import org.senchalabs.gwt.gwtdriver.models.GwtWidget.ForWidget;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -29,13 +37,6 @@ import java.lang.annotation.Target;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-
-import com.google.gwt.user.client.ui.Widget;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.senchalabs.gwt.gwtdriver.invoke.ClientMethodsFactory;
-import org.senchalabs.gwt.gwtdriver.invoke.ExportedMethods;
-import org.senchalabs.gwt.gwtdriver.models.GwtWidget.ForWidget;
 
 /**
  * Represents a GWT Widget class. Subclasses should add appropriate methods to enable basic interaction
@@ -115,12 +116,14 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 	public <W extends GwtWidget<T>, T extends GwtWidgetFinder<W>> T find(Class<W> widgetType) {
 		return find(widgetType, getDriver(), getElement());
 	}
+
 	/**
 	 * Static helper method to enable finding without an initial widget to start from. Useful to start 
 	 * writing a test or to find some other high level widget to work with.
 	 * <p/>
-	 * This method takes no WebElement, which usually means that either the finder will find its own, or
-	 * that {@link GwtWidgetFinder#withElement(WebElement)} will be invoked.
+	 * This method takes no WebElement, but assumes that the body tag from the driver should be used. Invoke
+	 * {@link GwtWidgetFinder#withElement(org.openqa.selenium.WebElement)} to select a different element, or
+	 * use {@link #find(Class, org.openqa.selenium.WebDriver, org.openqa.selenium.WebElement)} instead
 	 * 
 	 * @see #find(Class)
 	 * @see #find(Class, WebDriver, WebElement)
@@ -129,8 +132,9 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 	 * @return a finder able to return that type of widget when done() is invoked.
 	 */
 	public static <W extends GwtWidget<T>, T extends GwtWidgetFinder<W>> T find(Class<W> widgetType, WebDriver driver) {
-		return find(widgetType, driver, null);
+		return find(widgetType, driver, driver.findElement(By.tagName("body")));
 	}
+
 	/**
 	 * Static helper method to enable finding without an initial widget to work from. Useful to start
 	 * writing a test or to find some other high level widget to work with.
@@ -171,7 +175,7 @@ public class GwtWidget<F extends GwtWidgetFinder<?>> {
 		try {
 			return type.newInstance();
 		} catch (IllegalAccessException e) {
-			// type is not public
+			// type/ctor is not public
 			e.printStackTrace();
 		} catch (InstantiationException e) {
 			// type is abstract, or type doesn't have a no-arg ctor
