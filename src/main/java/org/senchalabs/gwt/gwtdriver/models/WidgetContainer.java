@@ -52,8 +52,8 @@ public class WidgetContainer extends GwtWidget<GwtWidgetFinder<WidgetContainer>>
 	 * Convenience method to find child/descendant widgets and wrap them. Same semantics as 
 	 * {@link WebElement#findElements(By)} - can be used to find if nothing matches this By.
 	 * 
-	 * @param by
-	 * @return
+	 * @param by how to find the widgets
+	 * @return the widgets found that match the by query
 	 */
 	public List<GwtWidget<?>> findWidgets(By by) {
 		LinkedHashSet<WebElement> eltsSet = new LinkedHashSet<WebElement>(getElement().findElements(new ByChained(by, new ByWidget(getDriver()))));
@@ -69,8 +69,8 @@ public class WidgetContainer extends GwtWidget<GwtWidgetFinder<WidgetContainer>>
 	 * semantics as {@link WebElement#findElement(By)} - will throw an exception if nothing 
 	 * matches.
 	 * 
-	 * @param by
-	 * @return
+	 * @param by how to find the widget
+	 * @return a matching widget found that matches
 	 */
 	public GwtWidget<?> findWidget(By by) throws NoSuchElementException {
 		WebElement elt = getElement().findElement(new CheatingByChained(by, new ByWidget(getDriver())));

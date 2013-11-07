@@ -81,9 +81,9 @@ public class ClientMethodsFactory {
 	/**
 	 * Creates an instance of the ClientMethods type on the first available module.
 	 *
-	 * @param type
-	 * @param driver
-	 * @return
+	 * @param type the ClientMethods type to build
+	 * @param driver a webdriver that should be used to communicate with the browser
+	 * @return an instance of the ClientMethods interface given, wired to the first module in the active browser
 	 */
 	public static <T extends ClientMethods> T create(Class<T> type, WebDriver driver) {
 		return create(type, driver, null);
@@ -92,10 +92,10 @@ public class ClientMethodsFactory {
 	/**
 	 * Creates an instance of the ClientMethods type on the given module name.
 	 * 
-	 * @param type
-	 * @param driver
-	 * @param moduleName
-	 * @return
+	 * @param type the ClientMethods type to build
+	 * @param driver a webdriver that should be used to communicate with the browser
+	 * @param moduleName the name of the GWT module to connect with
+	 * @return an instance of the ClientMethods interface given, wired to the named module in the active browser
 	 */
 	public static <T extends ClientMethods> T create(Class<T> type, WebDriver driver, String moduleName) {
 		assert driver instanceof JavascriptExecutor;

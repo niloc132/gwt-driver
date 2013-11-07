@@ -179,8 +179,6 @@ public abstract class SeleniumExporter implements EntryPoint {
 	 * 
 	 * "{@literal @}return One of Boolean, Long, String, List, WebElement, or null."
 	 * 
-	 * @author colin
-	 *
 	 */
 	public interface Function {
 		Object apply(JsArray<?> args);

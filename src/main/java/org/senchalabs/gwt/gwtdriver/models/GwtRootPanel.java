@@ -29,7 +29,6 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * Represents a {@link RootPanel}. Has convenience constructors for the body tag and elements with an id.
- * @author colin
  *
  */
 @ForWidget(RootPanel.class)

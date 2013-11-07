@@ -21,8 +21,6 @@ package org.senchalabs.gwt.gwtdriver.invoke;
  */
 
 /**
- * 
- * @author colin
  *
  */
 public interface ClientMethods {
