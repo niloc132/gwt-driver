@@ -106,7 +106,7 @@ public class SimpleWidgetTest {
 			textBox.sendKeys("fdsa");
 
 			//find, click button
-			children.get(3).getElement().click();
+			GwtWidget.find(Button.class, wd).withText("Open dialog").done().click();
 
 			//find dialog by heading
 			Dialog headingDialog = new DialogFinder().withHeading("Heading").withDriver(wd).done();
