@@ -115,20 +115,9 @@
 						</goals>
 					</execution>
 					<!-- Doesnt work, since gwt:compile won't use test scope -->
-					<!-- <execution>
-						<id>compiled-js-for-tests</id>
-						<phase>process-test-classes</phase>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-						<configuration>
-							<warSourceDirectory>${basedir}/src/test/webapp</warSourceDirectory>
-							<webappDirectory>${project.build.directory}/www</webappDirectory>
-							<modules>
-								<module>com.colinalworth.gwtdriver.models.SimpleWidgets</module>
-							</modules>
-						</configuration>
-					</execution>-->
+					<!-- <execution> <id>compiled-js-for-tests</id> <phase>process-test-classes</phase> <goals> <goal>compile</goal> </goals> 
+						<configuration> <warSourceDirectory>${basedir}/src/test/webapp</warSourceDirectory> <webappDirectory>${project.build.directory}/www</webappDirectory> 
+						<modules> <module>com.colinalworth.gwtdriver.models.SimpleWidgets</module> </modules> </configuration> </execution> -->
 				</executions>
 				<dependencies>
 					<dependency>
@@ -235,8 +224,7 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -327,4 +315,95 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+	<profiles>
+		<profile>
+			<id>javadoc-online</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<configuration>
+							<doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
+							<docletArtifact>
+								<groupId>org.umlgraph</groupId>
+								<artifactId>umlgraph</artifactId>
+								<version>5.6.6</version>
+							</docletArtifact>
+							<additionalparam>
+								-horizontal
+							</additionalparam>
+							<links>
+								<link>http://selenium.googlecode.com/svn/trunk/docs/api/java/</link>	
+							</links>
+							<header>
+			                <![CDATA[
+			                <script type="text/javascript">
+			                var hasNav = document.getElementsByClassName('topNav').length!=0;
+			                if (hasNav) {
+			                  var _gaq = _gaq || [];
+			                  _gaq.push(['_setAccount', 'UA-1396058-10']);
+			                  _gaq.push(['_trackPageview']);
+			                  (function() {
+			                    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			                    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+			                  })();
+			                  var el = document.getElementById('javadocsHeader');
+			                  el.style.display = 'block';
+			                }
+			                </script>
+			                <div id="javadocsHeader">
+			                  <a href="https://github.com/niloc132/gwt-driver" target="_blank">Project Home</a> 
+			                  <a href="https://github.com/niloc132/gwt-driver/wiki" target="_blank">Wiki Home</a>
+			                </div>
+			                ]]>
+							</header>
+						</configuration>
+						<executions>
+							<execution>
+								<id>site-upload-javadocs</id>
+								<phase>site</phase>
+								<goals>
+									<goal>javadoc</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- Gihub Upload -->
+					<!-- run 'mvn site' to upload -->
+					<!-- run 'mvn site -X' to debug and upload. -->
+					<plugin>
+						<groupId>com.github.github</groupId>
+						<artifactId>site-maven-plugin</artifactId>
+						<version>0.8</version>
+						<configuration>
+							<!-- <dryRun>true</dryRun> -->
+							<message>Creating site for ${project.version}</message>
+							<!-- github > sets the ~/.m2/setting.xml server id profile -->
+							<server>github</server>
+							<outputDirectory>${project.build.directory}/site</outputDirectory>
+							<excludes>
+								<exclude>*.DS_Store</exclude>
+								<exclude>*.sh</exclude>
+								<exclude>options</exclude>
+								<exclude>packages</exclude>
+							</excludes>
+							<force>true</force>
+							<merge>true</merge>
+						</configuration>
+						<executions>
+							<execution>
+								<id>site-upload-javadocs</id>
+								<phase>site</phase>
+								<goals>
+									<goal>site</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
